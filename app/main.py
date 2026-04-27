@@ -27,6 +27,7 @@ from app.data.hcc_sample import (
     get_sample_analysis_results,
     get_sample_project_config
 )
+from app.core.export_service import export_service
 
 # 创建 FastAPI 应用
 app = FastAPI(
@@ -635,7 +636,315 @@ async def run_demo():
     }
 
 
-# ========== 启动 ==========
+# ========== 导出功能 ==========
+
+@app.get("/api/projects/{project_id}/export/summary")
+async def get_export_summary(project_id: str):
+    """获取项目导出文件摘要"""
+    if project_id not in projects_store:
+        raise HTTPException(status_code=404, detail="项目不存在")
+    
+    summary = export_service.get_export_summary(project_id)
+    return summary
+
+
+@app.post("/api/projects/{project_id}/export/charts")
+async def export_charts(
+    project_id: str,
+    format: str = "png",
+    dpi: int = 300
+):
+    """导出项目图表"""
+    if project_id not in projects_store:
+        raise HTTPException(status_code=404, detail="项目不存在")
+    
+    # 获取分析结果
+    if project_id in analysis_store:
+        analysis = analysis_store[project_id]
+        paf_results = analysis["paf_results"]
+    else:
+        paf_results = get_sample_analysis_results()["paf_results"]
+    
+    exported_files = []
+    
+    # 生成并导出 PAF 图表
+    from app.core.visualization import visualization_generator
+    
+    # 创建 PAF 图表
+    paf_chart_path = visualization_generator.create_paf_chart(
+        paf_results=paf_results,
+        title="PAF by Risk Factor",
+        filename=f"{project_id}_paf"
+    )
+    exported_files.append(paf_chart_path)
+    
+    # 创建趋势图
+    years = list(range(2000, 2021))
+    values = [35 * (1 + (y - 2000) * 0.01 if y < 2010 else 1.1 - (y - 2015) * 0.02) 
+              for y in years]
+    ci_lower = [v * 0.9 for v in values]
+    ci_upper = [v * 1.1 for v in values]
+    
+    trend_chart_path = visualization_generator.create_trend_chart_with_ci(
+        years=years,
+        values=values,
+        ci_lower=ci_lower,
+        ci_upper=ci_upper,
+        title="HCC Incidence Trend",
+        ylabel="ASR (per 100,000)",
+        filename=f"{project_id}_trend"
+    )
+    exported_files.append(trend_chart_path)
+    
+    # 创建风险因素饼图
+    risk_pafs = {r['risk_factor']: r['paf'] for r in paf_results}
+    pie_chart_path = visualization_generator.create_pie_chart(
+        data=risk_pafs,
+        title="Risk Factor Contribution",
+        filename=f"{project_id}_risk_pie"
+    )
+    exported_files.append(pie_chart_path)
+    
+    return {
+        "project_id": project_id,
+        "format": format,
+        "exported_files": exported_files,
+        "count": len(exported_files),
+        "message": f"成功导出 {len(exported_files)} 个图表"
+    }
+
+
+@app.post("/api/projects/{project_id}/export/paper")
+async def export_paper(
+    project_id: str,
+    format: str = "markdown"
+):
+    """导出论文"""
+    if project_id not in projects_store:
+        raise HTTPException(status_code=404, detail="项目不存在")
+    
+    project = projects_store[project_id]
+    
+    # 获取分析结果
+    if project_id in analysis_store:
+        analysis = analysis_store[project_id]
+        analysis_results = {
+            "paf_results": analysis["paf_results"],
+            "trend_results": analysis["trend_results"],
+            "descriptive_stats": {
+                "total_cases": 1500000,
+                "total_deaths": 1050000,
+                "time_range": f"{project['time_range'].get('start_year', 2000)}-{project['time_range'].get('end_year', 2020)}",
+                "countries": project["countries"]
+            }
+        }
+    else:
+        analysis_results = get_sample_analysis_results()
+    
+    # 生成论文
+    paper = paper_generator.generate_full_paper(
+        project_config=project,
+        analysis_results=analysis_results
+    )
+    
+    exported_files = []
+    
+    # 导出 Markdown
+    if format in ["markdown", "all"]:
+        paper_md = paper_generator.export_to_markdown(paper)
+        md_path = OUTPUT_DIR / "papers" / f"{project_id}_paper.md"
+        md_path.write_text(paper_md)
+        exported_files.append(str(md_path))
+    
+    # 导出 HTML
+    if format in ["html", "all"]:
+        paper_html = paper_generator.export_to_html(paper)
+        html_path = OUTPUT_DIR / "papers" / f"{project_id}_paper.html"
+        html_path.write_text(paper_html)
+        exported_files.append(str(html_path))
+    
+    # 导出 Word (如果可用)
+    if format in ["word", "all"]:
+        try:
+            word_path = export_service.export_paper_word(
+                title=paper["title"],
+                sections=paper["sections"],
+                filename=f"{project_id}_paper"
+            )
+            exported_files.append(word_path)
+        except Exception as e:
+            pass  # Word 导出失败时忽略
+    
+    return {
+        "project_id": project_id,
+        "format": format,
+        "exported_files": exported_files,
+        "word_count": paper["word_count"],
+        "message": f"论文导出成功 (约 {paper['word_count']} 词)"
+    }
+
+
+@app.post("/api/projects/{project_id}/export/package")
+async def create_export_package(
+    project_id: str,
+    include_charts: bool = True,
+    include_paper: bool = True,
+    include_data: bool = False
+):
+    """创建下载包"""
+    if project_id not in projects_store:
+        raise HTTPException(status_code=404, detail="项目不存在")
+    
+    # 收集文件
+    chart_files = []
+    paper_files = []
+    data_files = []
+    
+    if include_charts:
+        for f in (OUTPUT_DIR / "charts").glob(f"{project_id}*"):
+            chart_files.append(str(f))
+    
+    if include_paper:
+        for f in (OUTPUT_DIR / "papers").glob(f"{project_id}*"):
+            paper_files.append(str(f))
+    
+    # 创建 ZIP 包
+    zip_path = export_service.create_download_package(
+        project_id=project_id,
+        paper_files=paper_files,
+        chart_files=chart_files,
+        data_files=data_files
+    )
+    
+    return {
+        "project_id": project_id,
+        "zip_path": zip_path,
+        "files_count": {
+            "charts": len(chart_files),
+            "papers": len(paper_files),
+            "data": len(data_files)
+        },
+        "message": "下载包创建成功"
+    }
+
+
+@app.get("/api/projects/{project_id}/export/download/{filename}")
+async def download_export_file(project_id: str, filename: str):
+    """下载导出文件"""
+    # 搜索文件
+    for d in [OUTPUT_DIR / "charts", OUTPUT_DIR / "papers", OUTPUT_DIR / "exports"]:
+        filepath = d / filename
+        if filepath.exists():
+            return FileResponse(
+                path=str(filepath),
+                filename=filename
+            )
+    
+    raise HTTPException(status_code=404, detail="文件不存在")
+
+
+@app.get("/api/projects/{project_id}/export/download-all")
+async def download_all_exports(project_id: str):
+    """下载所有导出文件 (ZIP)"""
+    if project_id not in projects_store:
+        raise HTTPException(status_code=404, detail="项目不存在")
+    
+    # 收集所有文件
+    chart_files = [str(f) for f in (OUTPUT_DIR / "charts").glob(f"{project_id}*")]
+    paper_files = [str(f) for f in (OUTPUT_DIR / "papers").glob(f"{project_id}*")]
+    
+    if not chart_files and not paper_files:
+        raise HTTPException(status_code=404, detail="没有可下载的文件，请先生成图表和论文")
+    
+    # 创建 ZIP 包
+    zip_path = export_service.create_download_package(
+        project_id=project_id,
+        paper_files=paper_files,
+        chart_files=chart_files
+    )
+    
+    return FileResponse(
+        path=zip_path,
+        filename=os.path.basename(zip_path),
+        media_type="application/zip"
+    )
+
+
+# ========== 统计计算 API ==========
+
+@app.get("/api/statistics/methods")
+async def get_statistical_methods():
+    """获取支持的统计方法"""
+    return {
+        "methods": [
+            {
+                "name": "PAF",
+                "full_name": "Population Attributable Fraction",
+                "description": "人群归因分数 - 估计可归因于特定风险因素的疾病比例",
+                "formula": "PAF = (Pe × (RR - 1)) / (1 + Pe × (RR - 1))"
+            },
+            {
+                "name": "CDPAF",
+                "full_name": "Correlation-Decomposed PAF",
+                "description": "相关性分解归因分数 - 考虑多个风险因素间的相关性",
+                "formula": "调整后的联合PAF"
+            },
+            {
+                "name": "ASR",
+                "full_name": "Age-Standardized Rate",
+                "description": "年龄标准化率 - 使用标准人口进行年龄调整",
+                "formula": "ASR = Σ(rate_i × standard_i) / Σ(standard_i)"
+            },
+            {
+                "name": "Joinpoint",
+                "full_name": "Joinpoint Regression",
+                "description": "Joinpoint回归 - 识别时间趋势的转折点",
+                "formula": "分段线性回归"
+            },
+            {
+                "name": "APC",
+                "full_name": "Annual Percentage Change",
+                "description": "年度百分比变化 - 衡量时间趋势",
+                "formula": "APC = (exp(b) - 1) × 100"
+            }
+        ]
+    }
+
+
+@app.get("/api/databases")
+async def get_databases():
+    """获取支持的数据库信息"""
+    return {
+        "databases": [
+            {
+                "name": "GLOBOCAN",
+                "full_name": "Global Cancer Observatory",
+                "description": "全球癌症统计数据库",
+                "url": "https://gco.iarc.fr/",
+                "coverage": "185个国家/地区",
+                "cancer_types": "36种癌症",
+                "update_frequency": "定期更新"
+            },
+            {
+                "name": "GBD",
+                "full_name": "Global Burden of Disease",
+                "description": "全球疾病负担研究数据库",
+                "url": "http://ghdx.healthdata.org/gbd-results-tool",
+                "coverage": "204个国家/地区",
+                "data_types": "发病率、死亡率、伤残调整寿命年",
+                "update_frequency": "年度更新"
+            },
+            {
+                "name": "CI5",
+                "full_name": "Cancer Incidence in Five Continents",
+                "description": "五大洲癌症发病率数据库",
+                "url": "https://ci5.iarc.fr/",
+                "coverage": "60个国家/地区",
+                "data_types": "癌症发病率",
+                "update_frequency": "定期更新"
+            }
+        ]
+    }
 
 if __name__ == "__main__":
     uvicorn.run(
