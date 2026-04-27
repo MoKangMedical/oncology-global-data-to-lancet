@@ -1,645 +1,644 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cancer Epidemiology Research To Lancet</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #A51C30;
-            --primary-light: #D6604D;
-            --secondary: #2166AC;
-            --accent: #4393C3;
-            --background: #FEF7ED;
-            --text: #333333;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: var(--background);
-            color: var(--text);
-        }
-        
-        .bg-primary { background-color: var(--primary); }
-        .bg-secondary { background-color: var(--secondary); }
-        .text-primary { color: var(--primary); }
-        .text-secondary { color: var(--secondary); }
-        
-        .card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 24px;
-            margin-bottom: 16px;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary:hover {
-            background-color: var(--primary-light);
-            transform: translateY(-1px);
-        }
-        
-        .btn-secondary {
-            background-color: var(--secondary);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #1a5276;
-            transform: translateY(-1px);
-        }
-        
-        .btn-success {
-            background-color: #27ae60;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            font-weight: 500;
-        }
-        
-        .btn-success:hover {
-            background-color: #219a52;
-        }
-        
-        .result-box {
-            background: #f8f9fa;
-            border-left: 4px solid var(--primary);
-            padding: 16px;
-            margin: 16px 0;
-            border-radius: 0 8px 8px 0;
-        }
-        
-        .tab-container {
-            display: flex;
-            border-bottom: 2px solid #ddd;
-            margin-bottom: 20px;
-        }
-        
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
-            transition: all 0.2s;
-        }
-        
-        .tab.active {
-            border-bottom-color: var(--primary);
-            color: var(--primary);
-            font-weight: bold;
-        }
-        
-        .tab:hover {
-            color: var(--primary);
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .file-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .file-item:hover {
-            background: #f8f9fa;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .badge-png { background: #e3f2fd; color: #1565c0; }
-        .badge-svg { background: #f3e5f5; color: #7b1fa2; }
-        .badge-pdf { background: #fce4ec; color: #c62828; }
-        .badge-md { background: #e8f5e9; color: #2e7d32; }
-        .badge-docx { background: #fff3e0; color: #ef6c00; }
-        
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(0,0,0,.1);
-            border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cancer Epidemiology Research To Lancet</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<style>
+:root{--primary:#A51C30;--primary-light:#D6604D;--secondary:#2166AC;--accent:#4393C3;--bg:#FEF7ED;--text:#333}
+*{box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);margin:0}
+.nav{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.nav-brand{font-weight:700;color:var(--primary);font-size:18px;display:flex;align-items:center;gap:8px}
+.nav-links{display:flex;gap:20px}
+.nav-links a{color:#666;text-decoration:none;font-size:14px;cursor:pointer}
+.nav-links a:hover{color:var(--primary)}
+.page{display:none;max-width:1200px;margin:0 auto;padding:24px 20px}
+.page.active{display:block}
+.card{background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:24px;margin-bottom:20px}
+.btn{padding:10px 20px;border-radius:6px;border:none;cursor:pointer;font-weight:500;transition:all .2s;font-size:14px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-secondary{background:var(--secondary);color:#fff}
+.btn-success{background:#27ae60;color:#fff}
+.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-lg{padding:14px 28px;font-size:16px}
+.input{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none}
+.input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(165,28,48,.1)}
+select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 12px center #fff}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#555}
+.badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.badge-blue{background:#e3f2fd;color:#1565c0}
+.badge-green{background:#e8f5e9;color:#2e7d32}
+.badge-red{background:#fce4ec;color:#c62828}
+.badge-orange{background:#fff3e0;color:#ef6c00}
+.step{display:flex;align-items:center;gap:12px;padding:16px;border-radius:8px;background:#f8f9fa;margin-bottom:12px}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.step.done .step-num{background:#27ae60}
+.step.active{background:#fff3f5;border:2px solid var(--primary)}
+.step.active .step-num{background:var(--primary);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(165,28,48,.4)}50%{box-shadow:0 0 0 8px rgba(165,28,48,0)}}
+.progress-bar{height:6px;background:#eee;border-radius:3px;overflow:hidden;margin:12px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-light));border-radius:3px;transition:width .5s ease}
+.chip{display:inline-block;padding:6px 12px;border-radius:20px;font-size:12px;margin:4px;cursor:pointer;border:2px solid #ddd;transition:all .2s}
+.chip.selected{background:var(--primary);color:#fff;border-color:var(--primary)}
+.chip:hover{border-color:var(--primary)}
+.table{width:100%;border-collapse:collapse}
+.table th{background:#f8f9fa;padding:10px 12px;text-align:left;font-size:12px;font-weight:600;color:#666;border-bottom:2px solid #eee}
+.table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:13px}
+.result-box{background:#f8f9fa;border-left:4px solid var(--primary);padding:16px;border-radius:0 8px 8px 0;margin:12px 0}
+.spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(0,0,0,.1);border-radius:50%;border-top-color:var(--primary);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero{background:linear-gradient(135deg,#fff 0%,#fef7ed 100%);padding:60px 20px;text-align:center;border-bottom:1px solid #eee}
+.hero h1{font-size:36px;color:var(--primary);margin-bottom:12px}
+.hero p{font-size:18px;color:#666;margin-bottom:32px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px}
+@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.nav-links{display:none}}
+.tab-nav{display:flex;border-bottom:2px solid #eee;margin-bottom:20px}
+.tab-btn{padding:10px 20px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;font-size:14px;color:#666;transition:all .2s}
+.tab-btn.active{border-color:var(--primary);color:var(--primary);font-weight:600}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.file-row{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #f0f0f0}
+.file-row:hover{background:#fafafa}
+.toast{position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:8px;color:#fff;font-size:14px;z-index:999;animation:slideIn .3s ease}
+.toast.success{background:#27ae60}
+.toast.error{background:#c62828}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+</style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <svg class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-                <span class="text-xl font-bold text-primary">Cancer Research To Lancet</span>
-            </div>
-            <div class="flex space-x-4">
-                <a href="#calculator" class="text-gray-600 hover:text-primary">计算器</a>
-                <a href="#export" class="text-gray-600 hover:text-primary">导出中心</a>
-                <a href="#demo" class="text-gray-600 hover:text-primary">演示</a>
-                <a href="/api/docs" class="text-gray-600 hover:text-primary">API</a>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <header class="bg-white py-16">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold text-primary mb-4">
-                Cancer Epidemiology Research To Lancet
-            </h1>
-            <p class="text-xl text-gray-600 mb-8">
-                AI驱动的肿瘤学数据分析平台 — 从全球数据到Lancet论文
-            </p>
-            <div class="flex justify-center space-x-4">
-                <button onclick="runDemo()" class="btn-primary text-lg px-8 py-3">
-                    运行完整演示
-                </button>
-                <button onclick="scrollToExport()" class="btn-secondary text-lg px-8 py-3">
-                    导出中心
-                </button>
-            </div>
-        </div>
-    </header>
+<!-- Navigation -->
+<nav class="nav">
+<div class="nav-inner">
+  <div class="nav-brand">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--primary)"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    Cancer Research To Lancet
+  </div>
+  <div class="nav-links">
+    <a onclick="showPage('home')">首页</a>
+    <a onclick="showPage('wizard')">新建项目</a>
+    <a onclick="showPage('projects')">我的项目</a>
+    <a onclick="showPage('calculator')">PAF计算器</a>
+    <a onclick="showPage('export')">导出中心</a>
+    <a href="/api/docs" target="_blank">API</a>
+  </div>
+</div>
+</nav>
 
-    <!-- PAF Calculator -->
-    <section id="calculator" class="py-12">
-        <div class="max-w-3xl mx-auto px-4">
-            <h2 class="text-2xl font-bold text-center mb-8">PAF 计算器</h2>
-            <div class="card">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <label class="block text-sm font-medium mb-2">暴露率 (Exposure Rate)</label>
-                        <input type="number" id="exposureRate" value="0.3" step="0.01" min="0" max="1"
-                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
-                        <p class="text-xs text-gray-500 mt-1">人群中暴露于风险因素的比例 (0-1)</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium mb-2">相对风险 (Relative Risk)</label>
-                        <input type="number" id="relativeRisk" value="2.0" step="0.1" min="0"
-                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
-                        <p class="text-xs text-gray-500 mt-1">暴露组相对于非暴露组的风险倍数</p>
-                    </div>
-                </div>
-                <button onclick="calculatePAF()" class="btn-primary w-full">
-                    计算 PAF
-                </button>
-                <div id="pafResult" class="hidden mt-6">
-                    <div class="result-box">
-                        <h3 class="font-bold mb-2">计算结果</h3>
-                        <div id="pafValue" class="text-3xl font-bold text-primary"></div>
-                        <p id="pafInterpretation" class="text-sm text-gray-600 mt-2"></p>
-                        <div id="pafDetails" class="mt-4 text-sm"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Toast -->
+<div id="toast" class="toast" style="display:none"></div>
 
-    <!-- Export Center -->
-    <section id="export" class="py-12 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-2xl font-bold text-center mb-8">导出中心</h2>
-            
-            <!-- Tabs -->
-            <div class="tab-container">
-                <div class="tab active" onclick="switchTab('charts')">图表导出</div>
-                <div class="tab" onclick="switchTab('paper')">论文导出</div>
-                <div class="tab" onclick="switchTab('download')">下载中心</div>
-            </div>
-            
-            <!-- Charts Export -->
-            <div id="tab-charts" class="tab-content active">
-                <div class="card">
-                    <h3 class="font-bold mb-4">导出图表</h3>
-                    <p class="text-gray-600 mb-6">生成并导出 Lancet 风格的图表，支持多种格式</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div class="border rounded-lg p-4 text-center">
-                            <div class="text-2xl mb-2">📊</div>
-                            <h4 class="font-medium mb-1">PAF 条形图</h4>
-                            <p class="text-xs text-gray-500">风险因素贡献度</p>
-                        </div>
-                        <div class="border rounded-lg p-4 text-center">
-                            <div class="text-2xl mb-2">📈</div>
-                            <h4 class="font-medium mb-1">趋势图</h4>
-                            <p class="text-xs text-gray-500">发病趋势变化</p>
-                        </div>
-                        <div class="border rounded-lg p-4 text-center">
-                            <div class="text-2xl mb-2">🥧</div>
-                            <h4 class="font-medium mb-1">饼图</h4>
-                            <p class="text-xs text-gray-500">风险因素分布</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex space-x-4">
-                        <button onclick="exportCharts('png')" class="btn-primary">
-                            导出 PNG (高清)
-                        </button>
-                        <button onclick="exportCharts('svg')" class="btn-secondary">
-                            导出 SVG (矢量)
-                        </button>
-                    </div>
-                    
-                    <div id="chartsExportResult" class="hidden mt-4"></div>
-                </div>
-            </div>
-            
-            <!-- Paper Export -->
-            <div id="tab-paper" class="tab-content">
-                <div class="card">
-                    <h3 class="font-bold mb-4">导出论文</h3>
-                    <p class="text-gray-600 mb-6">生成符合 Lancet 标准的论文初稿，支持多种格式</p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div class="border rounded-lg p-4 text-center">
-                            <div class="text-2xl mb-2">📝</div>
-                            <h4 class="font-medium mb-1">Markdown</h4>
-                            <p class="text-xs text-gray-500">纯文本格式</p>
-                        </div>
-                        <div class="border rounded-lg p-4 text-center">
-                            <div class="text-2xl mb-2">🌐</div>
-                            <h4 class="font-medium mb-1">HTML</h4>
-                            <p class="text-xs text-gray-500">网页格式</p>
-                        </div>
-                        <div class="border rounded-lg p-4 text-center">
-                            <div class="text-2xl mb-2">📄</div>
-                            <h4 class="font-medium mb-1">Word</h4>
-                            <p class="text-xs text-gray-500">可编辑格式</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex space-x-4">
-                        <button onclick="exportPaper('all')" class="btn-primary">
-                            导出所有格式
-                        </button>
-                        <button onclick="exportPaper('markdown')" class="btn-secondary">
-                            仅 Markdown
-                        </button>
-                        <button onclick="exportPaper('html')" class="btn-secondary">
-                            仅 HTML
-                        </button>
-                    </div>
-                    
-                    <div id="paperExportResult" class="hidden mt-4"></div>
-                </div>
-            </div>
-            
-            <!-- Download Center -->
-            <div id="tab-download" class="tab-content">
-                <div class="card">
-                    <h3 class="font-bold mb-4">下载中心</h3>
-                    <p class="text-gray-600 mb-6">一键打包下载所有生成的文件</p>
-                    
-                    <div class="bg-gray-50 rounded-lg p-6 mb-6">
-                        <h4 class="font-medium mb-4">下载包内容</h4>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <h5 class="text-sm font-medium text-gray-700 mb-2">图表文件</h5>
-                                <ul class="text-sm text-gray-600 space-y-1">
-                                    <li>• PAF 条形图 (PNG/SVG)</li>
-                                    <li>• 趋势图 (PNG/SVG)</li>
-                                    <li>• 风险因素饼图 (PNG/SVG)</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h5 class="text-sm font-medium text-gray-700 mb-2">论文文件</h5>
-                                <ul class="text-sm text-gray-600 space-y-1">
-                                    <li>• 论文 (Markdown)</li>
-                                    <li>• 论文 (HTML)</li>
-                                    <li>• 论文 (Word)</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button onclick="createDownloadPackage()" class="btn-success text-lg px-8 py-3 w-full">
-                        📦 创建并下载 ZIP 包
-                    </button>
-                    
-                    <div id="downloadResult" class="hidden mt-4"></div>
-                    
-                    <!-- File List -->
-                    <div id="fileList" class="hidden mt-6">
-                        <h4 class="font-medium mb-4">已生成的文件</h4>
-                        <div id="fileListContent" class="border rounded-lg"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ========== HOME PAGE ========== -->
+<div id="page-home" class="page active">
+<div class="hero">
+  <h1>Cancer Epidemiology Research To Lancet</h1>
+  <p>AI驱动的肿瘤学数据分析平台 — 从全球数据到Lancet论文</p>
+  <div style="display:flex;gap:12px;justify-content:center">
+    <button class="btn btn-primary btn-lg" onclick="runFullDemo()">一键运行演示</button>
+    <button class="btn btn-secondary btn-lg" onclick="showPage('wizard')">创建新项目</button>
+  </div>
+</div>
+<div style="max-width:1200px;margin:40px auto;padding:0 20px">
+  <div class="grid-4">
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">📊</div>
+      <h3 style="margin-bottom:4px">数据整合</h3>
+      <p style="font-size:13px;color:#666">GLOBOCAN / GBD / CI5</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">📈</div>
+      <h3 style="margin-bottom:4px">统计分析</h3>
+      <p style="font-size:13px;color:#666">PAF / Joinpoint / ASR</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">📉</div>
+      <h3 style="margin-bottom:4px">可视化</h3>
+      <p style="font-size:13px;color:#666">Lancet风格图表</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">📝</div>
+      <h3 style="margin-bottom:4px">论文生成</h3>
+      <p style="font-size:13px;color:#666">符合Lancet标准</p>
+    </div>
+  </div>
+  <!-- Demo Result -->
+  <div id="demoResult" style="display:none;margin-top:30px">
+    <h2 style="text-align:center;margin-bottom:20px">演示结果</h2>
+    <div id="demoSteps"></div>
+    <div id="demoOutput"></div>
+  </div>
+</div>
+</div>
 
-    <!-- Demo Section -->
-    <section id="demo" class="py-12">
-        <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-2xl font-bold text-center mb-8">完整流程演示</h2>
-            <div class="text-center mb-8">
-                <button onclick="runDemo()" class="btn-primary text-lg px-8 py-3">
-                    <span id="demoBtnText">运行 HCC 演示</span>
-                    <span id="demoLoading" class="loading-spinner hidden ml-2"></span>
-                </button>
-            </div>
-            <div id="demoResult" class="hidden">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="card">
-                        <h3 class="font-bold mb-2">📊 数据</h3>
-                        <div id="demoData" class="text-sm"></div>
-                    </div>
-                    <div class="card">
-                        <h3 class="font-bold mb-2">📈 分析结果</h3>
-                        <div id="demoAnalysis" class="text-sm"></div>
-                    </div>
-                    <div class="card">
-                        <h3 class="font-bold mb-2">📝 论文</h3>
-                        <div id="demoPaper" class="text-sm"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ========== WIZARD PAGE ========== -->
+<div id="page-wizard" class="page">
+<h2 style="margin-bottom:24px">创建研究项目</h2>
+<div class="grid-2">
+<div>
+  <!-- Step 1: Basic Info -->
+  <div class="card">
+    <h3 style="margin-bottom:16px">1. 基本信息</h3>
+    <label>项目标题</label>
+    <input id="wiz-title" class="input" value="Global Epidemiology of Hepatocellular Carcinoma (2000-2020)" placeholder="输入项目标题">
+    <label style="margin-top:12px">项目描述</label>
+    <textarea id="wiz-desc" class="input" rows="3" placeholder="项目描述">A comprehensive analysis of HCC epidemiology across multiple countries, examining risk factors and temporal trends.</textarea>
+  </div>
+  <!-- Step 2: Cancer Types -->
+  <div class="card">
+    <h3 style="margin-bottom:16px">2. 癌症类型</h3>
+    <div id="wiz-cancers">
+      <span class="chip selected" data-val="liver">肝癌 Liver</span>
+      <span class="chip" data-val="lung">肺癌 Lung</span>
+      <span class="chip" data-val="breast">乳腺癌 Breast</span>
+      <span class="chip" data-val="colorectal">结直肠癌 Colorectal</span>
+      <span class="chip" data-val="stomach">胃癌 Stomach</span>
+      <span class="chip" data-val="prostate">前列腺癌 Prostate</span>
+      <span class="chip" data-val="thyroid">甲状腺癌 Thyroid</span>
+      <span class="chip" data-val="esophagus">食管癌 Esophagus</span>
+      <span class="chip" data-val="pancreas">胰腺癌 Pancreas</span>
+      <span class="chip" data-val="bladder">膀胱癌 Bladder</span>
+    </div>
+  </div>
+  <!-- Step 3: Countries -->
+  <div class="card">
+    <h3 style="margin-bottom:16px">3. 目标国家/地区</h3>
+    <div id="wiz-countries">
+      <span class="chip selected" data-val="China">中国</span>
+      <span class="chip selected" data-val="Japan">日本</span>
+      <span class="chip selected" data-val="South Korea">韩国</span>
+      <span class="chip selected" data-val="United States">美国</span>
+      <span class="chip" data-val="Germany">德国</span>
+      <span class="chip" data-val="France">法国</span>
+      <span class="chip" data-val="United Kingdom">英国</span>
+      <span class="chip" data-val="Brazil">巴西</span>
+      <span class="chip" data-val="India">印度</span>
+      <span class="chip" data-val="Australia">澳大利亚</span>
+      <span class="chip" data-val="Egypt">埃及</span>
+      <span class="chip" data-val="Nigeria">尼日利亚</span>
+      <span class="chip" data-val="Thailand">泰国</span>
+      <span class="chip" data-val="Vietnam">越南</span>
+      <span class="chip" data-val="Italy">意大利</span>
+    </div>
+  </div>
+</div>
+<div>
+  <!-- Step 4: Time Range -->
+  <div class="card">
+    <h3 style="margin-bottom:16px">4. 时间范围</h3>
+    <div class="grid-2">
+      <div><label>起始年份</label><input id="wiz-start" type="number" class="input" value="2000"></div>
+      <div><label>结束年份</label><input id="wiz-end" type="number" class="input" value="2020"></div>
+    </div>
+  </div>
+  <!-- Step 5: Risk Factors -->
+  <div class="card">
+    <h3 style="margin-bottom:16px">5. 风险因素</h3>
+    <div id="wiz-risks">
+      <span class="chip selected" data-val="hepatitis_b">乙肝 Hepatitis B</span>
+      <span class="chip selected" data-val="hepatitis_c">丙肝 Hepatitis C</span>
+      <span class="chip selected" data-val="alcohol">饮酒 Alcohol</span>
+      <span class="chip selected" data-val="obesity">肥胖 Obesity</span>
+      <span class="chip selected" data-val="diabetes">糖尿病 Diabetes</span>
+      <span class="chip selected" data-val="smoking">吸烟 Smoking</span>
+      <span class="chip" data-val="hpv">HPV</span>
+      <span class="chip" data-val="h_pylori">幽门螺杆菌</span>
+      <span class="chip" data-val="air_pollution">空气污染</span>
+      <span class="chip" data-val="physical_inactivity">缺乏运动</span>
+    </div>
+  </div>
+  <!-- Step 6: Data Source -->
+  <div class="card">
+    <h3 style="margin-bottom:16px">6. 数据源</h3>
+    <select id="wiz-source" class="input">
+      <option value="GLOBOCAN">GLOBOCAN - 全球癌症统计</option>
+      <option value="GBD">GBD - 全球疾病负担</option>
+      <option value="CI5">CI5 - 五大洲癌症发病率</option>
+    </select>
+  </div>
+  <!-- Submit -->
+  <div class="card" style="text-align:center">
+    <button class="btn btn-primary btn-lg" onclick="createProject()" style="width:100%">创建项目</button>
+    <p style="font-size:12px;color:#999;margin-top:8px">创建后可加载示例数据或上传自己的数据</p>
+  </div>
+</div>
+</div>
+</div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="mb-2">Cancer Epidemiology Research To Lancet</p>
-            <p class="text-gray-400 text-sm">AI驱动的肿瘤学数据分析平台</p>
-        </div>
-    </footer>
+<!-- ========== PROJECTS PAGE ========== -->
+<div id="page-projects" class="page">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+  <h2>我的项目</h2>
+  <button class="btn btn-primary" onclick="showPage('wizard')">新建项目</button>
+</div>
+<div id="projectsList"><p style="color:#999;text-align:center;padding:40px">暂无项目，请先创建项目或运行演示</p></div>
+</div>
 
-    <script>
-        const API_BASE = '';
-        let currentProjectId = null;
-        
-        // 滚动到导出中心
-        function scrollToExport() {
-            document.getElementById('export').scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        // Tab 切换
-        function switchTab(tabName) {
-            // 隐藏所有 tab 内容
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-            
-            // 显示选中的 tab
-            document.getElementById(`tab-${tabName}`).classList.add('active');
-            event.target.classList.add('active');
-        }
-        
-        // 计算 PAF
-        async function calculatePAF() {
-            const exposureRate = parseFloat(document.getElementById('exposureRate').value);
-            const relativeRisk = parseFloat(document.getElementById('relativeRisk').value);
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/analysis/paf`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ exposure_rate: exposureRate, relative_risk: relativeRisk })
-                });
-                
-                const result = await response.json();
-                
-                document.getElementById('pafResult').classList.remove('hidden');
-                document.getElementById('pafValue').textContent = `${(result.paf * 100).toFixed(1)}%`;
-                document.getElementById('pafInterpretation').textContent = 
-                    `在暴露率为 ${(exposureRate * 100).toFixed(1)}% 的人群中，该风险因素导致了 ${(result.paf * 100).toFixed(1)}% 的疾病负担`;
-                document.getElementById('pafDetails').innerHTML = `
-                    <p><strong>95% 置信区间:</strong> ${(result.ci_lower * 100).toFixed(1)}% - ${(result.ci_upper * 100).toFixed(1)}%</p>
-                    <p><strong>暴露率:</strong> ${(result.exposure_rate * 100).toFixed(1)}%</p>
-                    <p><strong>相对风险:</strong> ${result.relative_risk.toFixed(2)}</p>
-                `;
-            } catch (error) {
-                alert('计算失败: ' + error.message);
-            }
-        }
-        
-        // 导出图表
-        async function exportCharts(format) {
-            if (!currentProjectId) {
-                // 先创建演示项目
-                await runDemo();
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/projects/${currentProjectId}/export/charts?format=${format}`, {
-                    method: 'POST'
-                });
-                
-                const result = await response.json();
-                
-                const resultDiv = document.getElementById('chartsExportResult');
-                resultDiv.classList.remove('hidden');
-                resultDiv.innerHTML = `
-                    <div class="result-box">
-                        <p class="font-medium text-green-600">✓ ${result.message}</p>
-                        <ul class="mt-2 text-sm">
-                            ${result.exported_files.map(f => `<li>• ${f.split('/').pop()}</li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-            } catch (error) {
-                alert('导出失败: ' + error.message);
-            }
-        }
-        
-        // 导出论文
-        async function exportPaper(format) {
-            if (!currentProjectId) {
-                await runDemo();
-            }
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/projects/${currentProjectId}/export/paper?format=${format}`, {
-                    method: 'POST'
-                });
-                
-                const result = await response.json();
-                
-                const resultDiv = document.getElementById('paperExportResult');
-                resultDiv.classList.remove('hidden');
-                resultDiv.innerHTML = `
-                    <div class="result-box">
-                        <p class="font-medium text-green-600">✓ ${result.message}</p>
-                        <ul class="mt-2 text-sm">
-                            ${result.exported_files.map(f => `<li>• ${f.split('/').pop()}</li>`).join('')}
-                        </ul>
-                    </div>
-                `;
-            } catch (error) {
-                alert('导出失败: ' + error.message);
-            }
-        }
-        
-        // 创建下载包
-        async function createDownloadPackage() {
-            if (!currentProjectId) {
-                await runDemo();
-            }
-            
-            try {
-                // 先生成所有文件
-                await fetch(`${API_BASE}/api/projects/${currentProjectId}/export/charts?format=png`, { method: 'POST' });
-                await fetch(`${API_BASE}/api/projects/${currentProjectId}/export/paper?format=all`, { method: 'POST' });
-                
-                // 创建下载包
-                const response = await fetch(`${API_BASE}/api/projects/${currentProjectId}/export/package`, {
-                    method: 'POST'
-                });
-                
-                const result = await response.json();
-                
-                const resultDiv = document.getElementById('downloadResult');
-                resultDiv.classList.remove('hidden');
-                resultDiv.innerHTML = `
-                    <div class="result-box">
-                        <p class="font-medium text-green-600">✓ ${result.message}</p>
-                        <p class="text-sm mt-2">图表: ${result.files_count.charts} 个 | 论文: ${result.files_count.papers} 个</p>
-                    </div>
-                `;
-                
-                // 显示文件列表
-                showFileList();
-                
-            } catch (error) {
-                alert('创建下载包失败: ' + error.message);
-            }
-        }
-        
-        // 显示文件列表
-        async function showFileList() {
-            if (!currentProjectId) return;
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/projects/${currentProjectId}/export/summary`);
-                const result = await response.json();
-                
-                const fileListDiv = document.getElementById('fileList');
-                fileListDiv.classList.remove('hidden');
-                
-                let html = '';
-                
-                if (result.charts.length > 0) {
-                    html += '<div class="p-4 border-b"><h5 class="font-medium mb-2">图表文件</h5>';
-                    result.charts.forEach(f => {
-                        const ext = f.filename.split('.').pop();
-                        html += `
-                            <div class="file-item">
-                                <div>
-                                    <span class="badge badge-${ext}">${ext.toUpperCase()}</span>
-                                    <span class="ml-2">${f.filename}</span>
-                                </div>
-                                <span class="text-gray-500">${(f.size / 1024).toFixed(1)} KB</span>
-                            </div>
-                        `;
-                    });
-                    html += '</div>';
-                }
-                
-                if (result.papers.length > 0) {
-                    html += '<div class="p-4"><h5 class="font-medium mb-2">论文文件</h5>';
-                    result.papers.forEach(f => {
-                        const ext = f.filename.split('.').pop();
-                        html += `
-                            <div class="file-item">
-                                <div>
-                                    <span class="badge badge-${ext}">${ext.toUpperCase()}</span>
-                                    <span class="ml-2">${f.filename}</span>
-                                </div>
-                                <span class="text-gray-500">${(f.size / 1024).toFixed(1)} KB</span>
-                            </div>
-                        `;
-                    });
-                    html += '</div>';
-                }
-                
-                document.getElementById('fileListContent').innerHTML = html;
-                
-            } catch (error) {
-                console.error('获取文件列表失败:', error);
-            }
-        }
-        
-        // 运行演示
-        async function runDemo() {
-            const btnText = document.getElementById('demoBtnText');
-            const loading = document.getElementById('demoLoading');
-            
-            btnText.textContent = '正在运行...';
-            loading.classList.remove('hidden');
-            
-            try {
-                const response = await fetch(`${API_BASE}/api/demo/run`, { method: 'POST' });
-                const result = await response.json();
-                
-                currentProjectId = result.project_id;
-                
-                document.getElementById('demoResult').classList.remove('hidden');
-                
-                document.getElementById('demoData').innerHTML = `
-                    <p><strong>项目 ID:</strong> ${result.project_id}</p>
-                    <p><strong>数据记录:</strong> ${result.data_records} 条</p>
-                    <p><strong>数据源:</strong> GLOBOCAN</p>
-                `;
-                
-                let analysisHtml = '<ul class="list-disc pl-4">';
-                result.paf_results.slice(0, 3).forEach(r => {
-                    analysisHtml += `<li>${r.risk_factor}: PAF = ${(r.paf * 100).toFixed(1)}%</li>`;
-                });
-                analysisHtml += '</ul>';
-                document.getElementById('demoAnalysis').innerHTML = analysisHtml;
-                
-                document.getElementById('demoPaper').innerHTML = `
-                    <p><strong>状态:</strong> 已生成</p>
-                    <p><strong>格式:</strong> Markdown</p>
-                `;
-                
-                alert('演示完成！现在可以使用导出功能了。');
-            } catch (error) {
-                alert('演示失败: ' + error.message);
-            } finally {
-                btnText.textContent = '运行 HCC 演示';
-                loading.classList.add('hidden');
-            }
-        }
-    </script>
+<!-- ========== PROJECT DETAIL PAGE ========== -->
+<div id="page-detail" class="page">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+  <div>
+    <a onclick="showPage('projects')" style="color:var(--primary);cursor:pointer;font-size:13px">← 返回项目列表</a>
+    <h2 id="detail-title" style="margin-top:8px"></h2>
+  </div>
+  <div id="detail-actions"></div>
+</div>
+<!-- Steps -->
+<div id="detail-steps"></div>
+<!-- Content -->
+<div class="grid-2">
+  <div>
+    <div class="card" id="detail-config"></div>
+    <div class="card" id="detail-data"></div>
+  </div>
+  <div>
+    <div class="card" id="detail-analysis"></div>
+    <div class="card" id="detail-charts"></div>
+  </div>
+</div>
+<div class="card" id="detail-paper"></div>
+</div>
+
+<!-- ========== CALCULATOR PAGE ========== -->
+<div id="page-calculator" class="page" style="max-width:700px;margin:0 auto">
+<h2 style="text-align:center;margin-bottom:24px">PAF 计算器</h2>
+<div class="card">
+  <div class="grid-2" style="margin-bottom:20px">
+    <div>
+      <label>暴露率 (Exposure Rate)</label>
+      <input id="calc-exp" type="number" class="input" value="0.3" step="0.01" min="0" max="1">
+      <p style="font-size:11px;color:#999;margin-top:4px">人群中有风险因素的比例 (0-1)</p>
+    </div>
+    <div>
+      <label>相对风险 (Relative Risk)</label>
+      <input id="calc-rr" type="number" class="input" value="2.0" step="0.1" min="0">
+      <p style="font-size:11px;color:#999;margin-top:4px">暴露组相对于非暴露组的风险倍数</p>
+    </div>
+  </div>
+  <button class="btn btn-primary" onclick="calcPAF()" style="width:100%">计算 PAF</button>
+  <div id="calc-result" style="display:none;margin-top:20px">
+    <div class="result-box">
+      <div id="calc-value" style="font-size:36px;font-weight:700;color:var(--primary)"></div>
+      <p id="calc-interp" style="color:#666;margin-top:8px"></p>
+      <div id="calc-details" style="margin-top:12px;font-size:13px"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== EXPORT PAGE ========== -->
+<div id="page-export" class="page">
+<h2 style="margin-bottom:24px">导出中心</h2>
+<div class="card">
+  <p style="color:#666;margin-bottom:16px">选择一个项目进行导出，或先运行演示生成项目</p>
+  <div id="export-project-select"></div>
+</div>
+<div id="export-content" style="display:none">
+  <div class="grid-3">
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">📊</div>
+      <h3>图表导出</h3>
+      <p style="font-size:13px;color:#666;margin:8px 0">PNG / SVG 高清图表</p>
+      <button class="btn btn-primary btn-sm" onclick="doExportCharts()">导出图表</button>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">📝</div>
+      <h3>论文导出</h3>
+      <p style="font-size:13px;color:#666;margin:8px 0">Markdown / HTML / Word</p>
+      <button class="btn btn-secondary btn-sm" onclick="doExportPaper()">导出论文</button>
+    </div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">📦</div>
+      <h3>打包下载</h3>
+      <p style="font-size:13px;color:#666;margin:8px 0">ZIP 一键下载所有文件</p>
+      <button class="btn btn-success btn-sm" onclick="doExportPackage()">打包下载</button>
+    </div>
+  </div>
+  <div id="export-result"></div>
+</div>
+</div>
+
+<script>
+const API='';
+let projects=[];
+let currentPid=null;
+
+// ========== Navigation ==========
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  if(name==='projects') loadProjects();
+  if(name==='export') loadExportProjects();
+}
+
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast '+type;t.style.display='block';
+  setTimeout(()=>t.style.display='none',3000);
+}
+
+// ========== Chip Selection ==========
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click',()=>chip.classList.toggle('selected'));
+});
+
+function getSelected(containerId){
+  return [...document.querySelectorAll('#'+containerId+' .chip.selected')].map(c=>c.dataset.val);
+}
+
+// ========== Create Project ==========
+async function createProject(){
+  const data={
+    title:document.getElementById('wiz-title').value,
+    description:document.getElementById('wiz-desc').value,
+    cancer_types:getSelected('wiz-cancers'),
+    countries:getSelected('wiz-countries'),
+    time_range:{start_year:+document.getElementById('wiz-start').value,end_year:+document.getElementById('wiz-end').value},
+    risk_factors:getSelected('wiz-risks'),
+    data_source:document.getElementById('wiz-source').value
+  };
+  if(!data.title){toast('请输入项目标题','error');return;}
+  if(!data.cancer_types.length){toast('请选择癌症类型','error');return;}
+  if(!data.countries.length){toast('请选择国家','error');return;}
+  try{
+    const res=await fetch(API+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const proj=await res.json();
+    toast('项目创建成功！');
+    currentPid=proj.id;
+    // Auto load sample data
+    await fetch(API+'/api/sample/load/'+proj.id,{method:'POST'});
+    toast('示例数据已加载');
+    showProjectDetail(proj.id);
+  }catch(e){toast('创建失败: '+e.message,'error');}
+}
+
+// ========== Projects List ==========
+async function loadProjects(){
+  try{
+    const res=await fetch(API+'/api/projects');
+    const data=await res.json();
+    projects=data.projects||[];
+    renderProjects();
+  }catch(e){console.error(e);}
+}
+
+function renderProjects(){
+  const el=document.getElementById('projectsList');
+  if(!projects.length){el.innerHTML='<p style="color:#999;text-align:center;padding:40px">暂无项目</p>';return;}
+  el.innerHTML=projects.map(p=>`
+    <div class="card" style="cursor:pointer" onclick="showProjectDetail('${p.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <h3 style="margin-bottom:4px">${p.title}</h3>
+          <p style="font-size:13px;color:#666">${p.cancer_types.join(', ')} | ${p.countries.slice(0,3).join(', ')}${p.countries.length>3?'...':''}</p>
+          <p style="font-size:12px;color:#999;margin-top:4px">${p.time_range.start_year}-${p.time_range.end_year} | ${p.data_source}</p>
+        </div>
+        <span class="badge ${p.status==='completed'?'badge-green':p.status==='analyzed'?'badge-blue':'badge-orange'}">${p.status}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ========== Project Detail ==========
+async function showProjectDetail(pid){
+  currentPid=pid;
+  showPage('detail');
+  try{
+    const res=await fetch(API+'/api/projects/'+pid);
+    const proj=await res.json();
+    
+    document.getElementById('detail-title').textContent=proj.title;
+    
+    // Steps
+    const statusMap={'created':1,'data_uploaded':2,'analyzed':3,'visualized':4,'completed':5};
+    const step=statusMap[proj.status]||1;
+    document.getElementById('detail-steps').innerHTML=`
+      <div class="step ${step>=1?'done':''} ${step===1?'active':''}"><div class="step-num">1</div><div><b>创建项目</b><br><small>配置研究参数</small></div></div>
+      <div class="step ${step>=2?'done':''} ${step===2?'active':''}"><div class="step-num">2</div><div><b>数据上传</b><br><small>CSV/Excel或示例数据</small></div></div>
+      <div class="step ${step>=3?'done':''} ${step===3?'active':''}"><div class="step-num">3</div><div><b>统计分析</b><br><small>PAF/趋势/Joinpoint</small></div></div>
+      <div class="step ${step>=4?'done':''} ${step===4?'active':''}"><div class="step-num">4</div><div><b>可视化</b><br><small>生成Lancet风格图表</small></div></div>
+      <div class="step ${step>=5?'done':''}"><div class="step-num">5</div><div><b>论文生成</b><br><small>导出Markdown/Word</small></div></div>
+    `;
+    
+    // Actions
+    let actions='';
+    if(step<=1) actions=`<button class="btn btn-primary" onclick="loadSampleData('${pid}')">加载示例数据</button>`;
+    if(step===2) actions=`<button class="btn btn-primary" onclick="runAnalysis('${pid}')">运行分析</button>`;
+    if(step===3) actions=`<button class="btn btn-primary" onclick="runVisualize('${pid}')">生成图表</button>`;
+    if(step===4) actions=`<button class="btn btn-primary" onclick="runPaper('${pid}')">生成论文</button>`;
+    if(step>=3) actions+=` <button class="btn btn-secondary" onclick="runAll('${pid}')">一键完成全部</button>`;
+    document.getElementById('detail-actions').innerHTML=actions;
+    
+    // Config
+    document.getElementById('detail-config').innerHTML=`
+      <h3 style="margin-bottom:12px">项目配置</h3>
+      <table class="table">
+        <tr><td><b>癌症类型</b></td><td>${proj.cancer_types.join(', ')}</td></tr>
+        <tr><td><b>国家/地区</b></td><td>${proj.countries.join(', ')}</td></tr>
+        <tr><td><b>时间范围</b></td><td>${proj.time_range.start_year} - ${proj.time_range.end_year}</td></tr>
+        <tr><td><b>风险因素</b></td><td>${proj.risk_factors.join(', ')}</td></tr>
+        <tr><td><b>数据源</b></td><td>${proj.data_source}</td></tr>
+        <tr><td><b>状态</b></td><td><span class="badge badge-blue">${proj.status}</span></td></tr>
+      </table>
+    `;
+    
+    // Data
+    try{
+      const dRes=await fetch(API+'/api/projects/'+pid+'/data');
+      const dData=await dRes.json();
+      if(dData.summary){
+        document.getElementById('detail-data').innerHTML=`
+          <h3 style="margin-bottom:12px">数据摘要</h3>
+          <table class="table">
+            <tr><td><b>记录数</b></td><td>${dData.summary.total_records}</td></tr>
+            <tr><td><b>国家数</b></td><td>${dData.summary.n_countries||'-'}</td></tr>
+            <tr><td><b>年份范围</b></td><td>${dData.summary.year_range?dData.summary.year_range.min+'-'+dData.summary.year_range.max:'-'}</td></tr>
+            <tr><td><b>癌症类型</b></td><td>${dData.summary.cancer_types?dData.summary.cancer_types.join(', '):'-'}</td></tr>
+          </table>
+        `;
+      }else{
+        document.getElementById('detail-data').innerHTML='<h3>数据</h3><p style="color:#999">尚未上传数据</p>';
+      }
+    }catch(e){}
+    
+  }catch(e){toast('加载项目失败','error');}
+}
+
+async function loadSampleData(pid){
+  try{
+    await fetch(API+'/api/sample/load/'+pid,{method:'POST'});
+    toast('示例数据加载成功');
+    showProjectDetail(pid);
+  }catch(e){toast('加载失败','error');}
+}
+
+async function runAnalysis(pid){
+  toast('正在运行分析...');
+  try{
+    await fetch(API+'/api/projects/'+pid+'/analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_id:pid,analysis_type:'PAF'})});
+    toast('分析完成');
+    showProjectDetail(pid);
+  }catch(e){toast('分析失败','error');}
+}
+
+async function runVisualize(pid){
+  toast('正在生成图表...');
+  try{
+    await fetch(API+'/api/projects/'+pid+'/visualize',{method:'POST'});
+    toast('图表生成完成');
+    showProjectDetail(pid);
+  }catch(e){toast('图表生成失败','error');}
+}
+
+async function runPaper(pid){
+  toast('正在生成论文...');
+  try{
+    await fetch(API+'/api/projects/'+pid+'/paper',{method:'POST'});
+    toast('论文生成完成');
+    showProjectDetail(pid);
+  }catch(e){toast('论文生成失败','error');}
+}
+
+async function runAll(pid){
+  toast('正在执行完整流程...');
+  try{
+    await fetch(API+'/api/projects/'+pid+'/analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_id:pid,analysis_type:'PAF'})});
+    await fetch(API+'/api/projects/'+pid+'/visualize',{method:'POST'});
+    await fetch(API+'/api/projects/'+pid+'/paper',{method:'POST'});
+    toast('全部完成！');
+    showProjectDetail(pid);
+  }catch(e){toast('执行失败','error');}
+}
+
+// ========== PAF Calculator ==========
+async function calcPAF(){
+  const exp=parseFloat(document.getElementById('calc-exp').value);
+  const rr=parseFloat(document.getElementById('calc-rr').value);
+  try{
+    const res=await fetch(API+'/api/analysis/paf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exposure_rate:exp,relative_risk:rr})});
+    const r=await res.json();
+    document.getElementById('calc-result').style.display='block';
+    document.getElementById('calc-value').textContent=(r.paf*100).toFixed(1)+'%';
+    document.getElementById('calc-interp').textContent=`在暴露率 ${(exp*100).toFixed(1)}% 的人群中，该因素导致 ${(r.paf*100).toFixed(1)}% 的疾病负担`;
+    document.getElementById('calc-details').innerHTML=`
+      <p><b>95% CI:</b> ${(r.ci_lower*100).toFixed(1)}% - ${(r.ci_upper*100).toFixed(1)}%</p>
+      <p><b>暴露率:</b> ${(r.exposure_rate*100).toFixed(1)}%</p>
+      <p><b>相对风险:</b> ${r.relative_risk.toFixed(2)}</p>
+    `;
+  }catch(e){toast('计算失败','error');}
+}
+
+// ========== Export ==========
+async function loadExportProjects(){
+  try{
+    const res=await fetch(API+'/api/projects');
+    const data=await res.json();
+    projects=data.projects||[];
+    const el=document.getElementById('export-project-select');
+    if(!projects.length){el.innerHTML='<p style="color:#999">暂无项目，请先创建项目</p>';return;}
+    el.innerHTML='<select id="export-pid" class="input" onchange="selectExportProject()">'+projects.map(p=>`<option value="${p.id}">${p.title} (${p.status})</option>`).join('')+'</select>';
+  }catch(e){}
+}
+
+function selectExportProject(){
+  currentPid=document.getElementById('export-pid').value;
+  document.getElementById('export-content').style.display='block';
+}
+
+async function doExportCharts(){
+  if(!currentPid){toast('请先选择项目','error');return;}
+  try{
+    const res=await fetch(API+'/api/projects/'+currentPid+'/export/charts?format=png',{method:'POST'});
+    const r=await res.json();
+    document.getElementById('export-result').innerHTML=`<div class="result-box"><b>✓ ${r.message}</b><ul>${r.exported_files.map(f=>'<li>'+f.split('/').pop()+'</li>').join('')}</ul></div>`;
+  }catch(e){toast('导出失败','error');}
+}
+
+async function doExportPaper(){
+  if(!currentPid){toast('请先选择项目','error');return;}
+  try{
+    const res=await fetch(API+'/api/projects/'+currentPid+'/export/paper?format=all',{method:'POST'});
+    const r=await res.json();
+    document.getElementById('export-result').innerHTML=`<div class="result-box"><b>✓ ${r.message}</b><ul>${r.exported_files.map(f=>'<li>'+f.split('/').pop()+'</li>').join('')}</ul></div>`;
+  }catch(e){toast('导出失败','error');}
+}
+
+async function doExportPackage(){
+  if(!currentPid){toast('请先选择项目','error');return;}
+  try{
+    await fetch(API+'/api/projects/'+currentPid+'/export/charts?format=png',{method:'POST'});
+    await fetch(API+'/api/projects/'+currentPid+'/export/paper?format=all',{method:'POST'});
+    const res=await fetch(API+'/api/projects/'+currentPid+'/export/package',{method:'POST'});
+    const r=await res.json();
+    document.getElementById('export-result').innerHTML=`<div class="result-box"><b>✓ ${r.message}</b><p>图表: ${r.files_count.charts} | 论文: ${r.files_count.papers}</p><p style="font-size:12px;color:#666">文件: ${r.zip_path}</p></div>`;
+    toast('下载包创建成功');
+  }catch(e){toast('打包失败','error');}
+}
+
+// ========== Full Demo ==========
+async function runFullDemo(){
+  const el=document.getElementById('demoResult');
+  el.style.display='block';
+  const stepsEl=document.getElementById('demoSteps');
+  const outputEl=document.getElementById('demoOutput');
+  
+  function setStep(n,text,done){
+    let html='';
+    for(let i=1;i<=5;i++){
+      const cls=i<n?'done':i===n?'active':'';
+      html+=`<div class="step ${cls}"><div class="step-num">${i}</div><div><b>${['','创建项目','加载数据','统计分析','生成图表','生成论文'][i]}</b>${i===n?' - '+text:i<n?' ✓':''}</div></div>`;
+    }
+    stepsEl.innerHTML=html;
+  }
+  
+  try{
+    setStep(1,'执行中...','');await new Promise(r=>setTimeout(r,500));
+    const res=await fetch(API+'/api/demo/run',{method:'POST'});
+    const result=await res.json();
+    currentPid=result.project_id;
+    
+    setStep(2,'完成','done');await new Promise(r=>setTimeout(r,300));
+    setStep(3,'完成','done');await new Promise(r=>setTimeout(r,300));
+    setStep(4,'完成','done');await new Promise(r=>setTimeout(r,300));
+    setStep(5,'完成','done');
+    
+    outputEl.innerHTML=`
+      <div class="card">
+        <h3 style="margin-bottom:12px">演示完成！</h3>
+        <div class="grid-3">
+          <div><b>数据记录:</b> ${result.data_records} 条</div>
+          <div><b>风险因素:</b> ${result.paf_results.length} 个</div>
+          <div><b>图表:</b> ${result.charts.length} 个</div>
+        </div>
+        <div style="margin-top:16px">
+          <h4>PAF 分析结果 (Top 3)</h4>
+          <table class="table">
+            <tr><th>风险因素</th><th>PAF</th><th>95% CI</th></tr>
+            ${result.paf_results.slice(0,3).map(r=>`<tr><td>${r.risk_factor}</td><td><b>${(r.paf*100).toFixed(1)}%</b></td><td>${(r.ci_lower*100).toFixed(1)}% - ${(r.ci_upper*100).toFixed(1)}%</td></tr>`).join('')}
+          </table>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:12px">
+          <button class="btn btn-primary" onclick="showProjectDetail('${result.project_id}')">查看项目详情</button>
+          <button class="btn btn-secondary" onclick="showPage('export')">导出中心</button>
+        </div>
+      </div>
+    `;
+    toast('演示完成！');
+  }catch(e){
+    setStep(0,'失败','error');
+    outputEl.innerHTML=`<div class="result-box" style="border-color:#c62828"><b>演示失败:</b> ${e.message}</div>`;
+    toast('演示失败','error');
+  }
+}
+
+// Init
+loadProjects();
+</script>
 </body>
 </html>

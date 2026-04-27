@@ -97,20 +97,21 @@ class TrendRequest(BaseModel):
 
 # ========== API 路由 ==========
 
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def root():
-    """首页"""
+    """首页 - 返回前端页面"""
+    html_path = Path(__file__).parent / "templates" / "index.html"
+    return HTMLResponse(content=html_path.read_text(encoding='utf-8'))
+
+
+@app.get("/api")
+async def api_root():
+    """API 根路径"""
     return {
         "name": "肿瘤学全球数据到柳叶刀",
         "version": "2.0.0",
         "description": "AI驱动的肿瘤学数据分析平台",
-        "endpoints": {
-            "docs": "/api/docs",
-            "projects": "/api/projects",
-            "analysis": "/api/analysis",
-            "visualization": "/api/visualization",
-            "paper": "/api/paper"
-        }
+        "docs": "/api/docs"
     }
 
 
