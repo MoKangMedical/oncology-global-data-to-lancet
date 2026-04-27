@@ -14,7 +14,7 @@ xlrd>=2.0.0
 
 # Statistics
 scipy>=1.11.0
-statsmodels>=0.14.0
+statsmodels>=0.14.6
 
 # Visualization
 matplotlib>=3.8.0
