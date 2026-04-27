@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancer Epidemiology Research To Lancet</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #A51C30;
+            --primary-light: #D6604D;
+            --secondary: #2166AC;
+            --accent: #4393C3;
+            --background: #FEF7ED;
+            --text: #333333;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+        }
+        
+        .bg-primary { background-color: var(--primary); }
+        .bg-secondary { background-color: var(--secondary); }
+        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--secondary); }
+        .border-primary { border-color: var(--primary); }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .result-box {
+            background: #f8f9fa;
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            margin: 16px 0;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <svg class="w-8 h-8 text-primary" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                <span class="text-xl font-bold text-primary">Cancer Research To Lancet</span>
+            </div>
+            <div class="flex space-x-4">
+                <a href="#calculator" class="text-gray-600 hover:text-primary">PAF Calculator</a>
+                <a href="#demo" class="text-gray-600 hover:text-primary">Demo</a>
+                <a href="/api/docs" class="text-gray-600 hover:text-primary">API Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-white py-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-4xl font-bold text-primary mb-4">
+                Cancer Epidemiology Research To Lancet
+            </h1>
+            <p class="text-xl text-gray-600 mb-8">
+                AI驱动的肿瘤学数据分析平台 — 从全球数据到Lancet论文
+            </p>
+            <div class="flex justify-center space-x-4">
+                <button onclick="runDemo()" class="btn-primary text-lg px-8 py-3">
+                    运行完整演示
+                </button>
+                <button onclick="scrollToCalculator()" class="btn-secondary text-lg px-8 py-3">
+                    PAF 计算器
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features -->
+    <section class="py-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-center mb-8">核心功能</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="card text-center">
+                    <div class="text-3xl mb-3">📊</div>
+                    <h3 class="font-bold mb-2">数据整合</h3>
+                    <p class="text-sm text-gray-600">GLOBOCAN, GBD, CI5 三大数据库</p>
+                </div>
+                <div class="card text-center">
+                    <div class="text-3xl mb-3">📈</div>
+                    <h3 class="font-bold mb-2">统计分析</h3>
+                    <p class="text-sm text-gray-600">PAF, CDPAF, Joinpoint, ASR</p>
+                </div>
+                <div class="card text-center">
+                    <div class="text-3xl mb-3">📉</div>
+                    <h3 class="font-bold mb-2">可视化</h3>
+                    <p class="text-sm text-gray-600">Lancet风格图表自动生成</p>
+                </div>
+                <div class="card text-center">
+                    <div class="text-3xl mb-3">📝</div>
+                    <h3 class="font-bold mb-2">论文生成</h3>
+                    <p class="text-sm text-gray-600">符合Lancet标准的论文初稿</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAF Calculator -->
+    <section id="calculator" class="py-12">
+        <div class="max-w-3xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-center mb-8">PAF 计算器</h2>
+            <div class="card">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">暴露率 (Exposure Rate)</label>
+                        <input type="number" id="exposureRate" value="0.3" step="0.01" min="0" max="1"
+                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+                        <p class="text-xs text-gray-500 mt-1">人群中有风险因素暴露的比例 (0-1)</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">相对风险 (Relative Risk)</label>
+                        <input type="number" id="relativeRisk" value="2.0" step="0.1" min="0"
+                               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-primary">
+                        <p class="text-xs text-gray-500 mt-1">暴露组相对于非暴露组的风险倍数</p>
+                    </div>
+                </div>
+                <button onclick="calculatePAF()" class="btn-primary w-full">
+                    计算 PAF
+                </button>
+                <div id="pafResult" class="hidden mt-6">
+                    <div class="result-box">
+                        <h3 class="font-bold mb-2">计算结果</h3>
+                        <div id="pafValue" class="text-3xl font-bold text-primary"></div>
+                        <p id="pafInterpretation" class="text-sm text-gray-600 mt-2"></p>
+                        <div id="pafDetails" class="mt-4 text-sm"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="py-12 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-center mb-8">完整流程演示</h2>
+            <div class="text-center mb-8">
+                <button onclick="runDemo()" class="btn-primary text-lg px-8 py-3">
+                    <span id="demoBtnText">运行 HCC 演示</span>
+                    <span id="demoLoading" class="loading hidden"></span>
+                </button>
+            </div>
+            <div id="demoResult" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="card">
+                        <h3 class="font-bold mb-2">📊 数据</h3>
+                        <div id="demoData" class="text-sm"></div>
+                    </div>
+                    <div class="card">
+                        <h3 class="font-bold mb-2">📈 分析结果</h3>
+                        <div id="demoAnalysis" class="text-sm"></div>
+                    </div>
+                    <div class="card">
+                        <h3 class="font-bold mb-2">📝 论文</h3>
+                        <div id="demoPaper" class="text-sm"></div>
+                    </div>
+                </div>
+                <div id="demoCharts" class="mt-8"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- API Documentation Preview -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <h2 class="text-2xl font-bold text-center mb-8">API 接口</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card">
+                    <h3 class="font-bold mb-4">统计分析 API</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium mr-2">POST</span>
+                            <code>/api/analysis/paf</code>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium mr-2">POST</span>
+                            <code>/api/analysis/trend</code>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium mr-2">POST</span>
+                            <code>/api/analysis/joinpoint</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="font-bold mb-4">项目管理 API</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center">
+                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium mr-2">GET</span>
+                            <code>/api/projects</code>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium mr-2">POST</span>
+                            <code>/api/projects</code>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium mr-2">POST</span>
+                            <code>/api/demo/run</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-6">
+                <a href="/api/docs" class="text-primary hover:underline">查看完整 API 文档 →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="mb-2">Cancer Epidemiology Research To Lancet</p>
+            <p class="text-gray-400 text-sm">AI驱动的肿瘤学数据分析平台</p>
+        </div>
+    </footer>
+
+    <script>
+        const API_BASE = '';
+        
+        // 滚动到计算器
+        function scrollToCalculator() {
+            document.getElementById('calculator').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 计算 PAF
+        async function calculatePAF() {
+            const exposureRate = parseFloat(document.getElementById('exposureRate').value);
+            const relativeRisk = parseFloat(document.getElementById('relativeRisk').value);
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/analysis/paf`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ exposure_rate: exposureRate, relative_risk: relativeRisk })
+                });
+                
+                const result = await response.json();
+                
+                document.getElementById('pafResult').classList.remove('hidden');
+                document.getElementById('pafValue').textContent = `${(result.paf * 100).toFixed(1)}%`;
+                document.getElementById('pafInterpretation').textContent = 
+                    `在暴露率为 ${(exposureRate * 100).toFixed(1)}% 的人群中，该风险因素导致了 ${(result.paf * 100).toFixed(1)}% 的疾病负担`;
+                document.getElementById('pafDetails').innerHTML = `
+                    <p><strong>95% 置信区间:</strong> ${(result.ci_lower * 100).toFixed(1)}% - ${(result.ci_upper * 100).toFixed(1)}%</p>
+                    <p><strong>暴露率:</strong> ${(result.exposure_rate * 100).toFixed(1)}%</p>
+                    <p><strong>相对风险:</strong> ${result.relative_risk.toFixed(2)}</p>
+                `;
+            } catch (error) {
+                alert('计算失败: ' + error.message);
+            }
+        }
+        
+        // 运行演示
+        async function runDemo() {
+            const btnText = document.getElementById('demoBtnText');
+            const loading = document.getElementById('demoLoading');
+            
+            btnText.textContent = '正在运行...';
+            loading.classList.remove('hidden');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/demo/run`, { method: 'POST' });
+                const result = await response.json();
+                
+                // 显示结果
+                document.getElementById('demoResult').classList.remove('hidden');
+                
+                // 数据信息
+                document.getElementById('demoData').innerHTML = `
+                    <p><strong>项目:</strong> ${result.project_id}</p>
+                    <p><strong>数据记录:</strong> ${result.data_records} 条</p>
+                    <p><strong>数据源:</strong> GLOBOCAN</p>
+                `;
+                
+                // 分析结果
+                let analysisHtml = '<ul class="list-disc pl-4">';
+                result.paf_results.slice(0, 3).forEach(r => {
+                    analysisHtml += `<li>${r.risk_factor}: PAF = ${(r.paf * 100).toFixed(1)}%</li>`;
+                });
+                analysisHtml += '</ul>';
+                document.getElementById('demoAnalysis').innerHTML = analysisHtml;
+                
+                // 论文信息
+                document.getElementById('demoPaper').innerHTML = `
+                    <p><strong>状态:</strong> 已生成</p>
+                    <p><strong>格式:</strong> Markdown</p>
+                    <p><strong>路径:</strong> ${result.paper_path}</p>
+                `;
+                
+                // 图表
+                if (result.charts && result.charts.length > 0) {
+                    let chartsHtml = '<h3 class="font-bold mb-4">生成的图表</h3><div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+                    result.charts.forEach(chart => {
+                        chartsHtml += `
+                            <div class="chart-container">
+                                <p class="text-sm font-medium mb-2">${chart.type}</p>
+                                <p class="text-xs text-gray-500">${chart.path}</p>
+                            </div>
+                        `;
+                    });
+                    chartsHtml += '</div>';
+                    document.getElementById('demoCharts').innerHTML = chartsHtml;
+                }
+                
+                alert('演示完成！');
+            } catch (error) {
+                alert('演示失败: ' + error.message);
+            } finally {
+                btnText.textContent = '运行 HCC 演示';
+                loading.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
