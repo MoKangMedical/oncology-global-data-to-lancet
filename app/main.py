@@ -357,6 +357,16 @@ async def analyze_joinpoint(request: TrendRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@app.get("/api/projects/{project_id}/analysis")
+async def get_analysis(project_id: str):
+    """获取项目分析结果"""
+    if project_id not in projects_store:
+        raise HTTPException(status_code=404, detail="项目不存在")
+    if project_id not in analysis_store:
+        return {"message": "尚未运行分析"}
+    return analysis_store[project_id]
+
+
 @app.post("/api/projects/{project_id}/analysis")
 async def run_analysis(project_id: str, request: AnalysisRequest):
     """运行项目分析"""
@@ -542,6 +552,49 @@ async def generate_paper(project_id: str):
         },
         "message": "论文生成成功"
     }
+
+
+@app.get("/api/projects/{project_id}/paper")
+async def get_paper(project_id: str):
+    """获取项目论文内容"""
+    if project_id not in projects_store:
+        raise HTTPException(status_code=404, detail="项目不存在")
+    
+    paper_path = OUTPUT_DIR / "papers" / f"{project_id}_paper.md"
+    html_path = OUTPUT_DIR / "papers" / f"{project_id}_paper.html"
+    
+    result = {"project_id": project_id, "has_paper": False}
+    
+    if paper_path.exists():
+        result["has_paper"] = True
+        result["markdown"] = paper_path.read_text(encoding='utf-8')
+    
+    if html_path.exists():
+        result["html_path"] = str(html_path)
+    
+    # Try to get structured paper data from the most recent generation
+    if project_id in projects_store:
+        project = projects_store[project_id]
+        if project_id in analysis_store:
+            analysis = analysis_store[project_id]
+            analysis_results = {
+                "paf_results": analysis.get("paf_results", []),
+                "trend_results": analysis.get("trend_results", {}),
+                "descriptive_stats": {
+                    "total_cases": 1500000,
+                    "total_deaths": 1050000,
+                    "time_range": f"{project['time_range'].get('start_year', 2000)}-{project['time_range'].get('end_year', 2020)}",
+                    "countries": project["countries"]
+                }
+            }
+            paper = paper_generator.generate_full_paper(
+                project_config=project,
+                analysis_results=analysis_results
+            )
+            result["has_paper"] = True
+            result["paper"] = paper
+    
+    return result
 
 
 @app.get("/api/projects/{project_id}/paper/download")

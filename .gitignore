@@ -1,13 +1,43 @@
+# Python
 __pycache__/
-*.pyc
-*.log
-.env
-_data/
-node_modules/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+*.egg-info/
 dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Output
+output/charts/*.png
+output/papers/*.md
+output/papers/*.html
+output/papers/*.docx
+output/exports/*.zip
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
 .env.local
-.env.*.local
-*.key
-*.pem
-*_secret*
-credentials.json
+
+# Node
+node_modules/
+
+# PID
+.pid

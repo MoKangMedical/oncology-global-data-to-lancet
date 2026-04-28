@@ -5,36 +5,110 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Cancer Epidemiology Research To Lancet</title>
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 <style>
-:root{--primary:#A51C30;--primary-light:#D6604D;--secondary:#2166AC;--accent:#4393C3;--bg:#FEF7ED;--text:#333}
+:root{--primary:#A51C30;--primary-light:#D6604D;--secondary:#2166AC;--accent:#4393C3;--bg:#FEF7ED;--text:#333;--green:#27ae60;--green-light:#e8f5e9;--card-bg:#fff;--border:#eee;--nav-bg:#fff;--input-bg:#fff;--input-border:#ddd;--muted:#666;--muted2:#888;--muted3:#999;--surface:#f8f9fa}
+/* Dark mode variables */
+body.dark{--bg:#1a1a2e;--text:#e0e0e0;--card-bg:#16213e;--border:#2a2a4a;--nav-bg:#0f3460;--input-bg:#1a1a2e;--input-border:#3a3a5a;--muted:#aab;--muted2:#99a;--muted3:#889;--surface:#1e2a4a;--green-light:#1a3a2a;--primary-light:#e07060}
 *{box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);margin:0;transition:background .3s,color .3s}
+.dark .nav{background:var(--nav-bg);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.dark .card{background:var(--card-bg);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.dark .input,.dark select.input{background:var(--input-bg);color:var(--text);border-color:var(--input-border)}
+.dark .input:focus{border-color:var(--primary-light);box-shadow:0 0 0 3px rgba(165,28,48,.2)}
+.dark label{color:var(--muted)}
+.dark .table th{background:var(--surface);color:var(--muted);border-bottom-color:var(--border)}
+.dark .table td{border-bottom-color:var(--border)}
+.dark .step{background:var(--surface)}
+.dark .step.active{background:rgba(165,28,48,.15);border-color:var(--primary)}
+.dark .stat-card{background:var(--surface)}
+.dark .result-box{background:var(--surface);border-left-color:var(--primary)}
+.dark .badge-blue{background:rgba(33,102,172,.2);color:#6cb4ee}
+.dark .badge-green{background:rgba(39,174,96,.2);color:#6dd89a}
+.dark .badge-red{background:rgba(198,40,40,.2);color:#f08080}
+.dark .badge-orange{background:rgba(239,108,0,.2);color:#f0a060}
+.dark .chip{border-color:var(--input-border);color:var(--text)}
+.dark .chip.selected{border-color:var(--primary)}
+.dark .db-card{background:var(--card-bg);border-color:var(--border)}
+.dark .db-card-header{border-bottom-color:var(--border)}
+.dark .db-kpi{background:var(--surface);border-color:var(--border)}
+.dark .db-metric-table th{background:var(--surface);color:var(--muted);border-bottom-color:var(--border)}
+.dark .db-metric-table td{border-bottom-color:var(--border)}
+.dark .db-metric-table tr:hover{background:var(--surface)}
+.dark .db-panel{background:var(--surface);border-color:var(--border)}
+.dark .db-hero{background:linear-gradient(180deg,var(--card-bg) 0%,var(--bg) 100%);border-bottom-color:var(--primary)}
+.dark .db-nav-btn{background:var(--card-bg);color:var(--text);border-color:var(--input-border)}
+.dark .db-nav-btn.active{background:var(--primary);color:#fff}
+.dark .tab-btn{color:var(--muted)}
+.dark .tab-btn.active{color:var(--primary)}
+.dark .paper-preview{background:var(--surface);color:var(--text)}
+.dark .paper-section-btn{background:var(--card-bg);color:var(--text);border-color:var(--input-border)}
+.dark .export-panel{background:var(--surface);border-color:var(--border)}
+.dark .tour-box{background:var(--card-bg)}
+.dark .tour-step-desc{color:var(--muted)}
+.dark .lancet-ref{color:var(--muted)}
+.dark .file-row:hover{background:var(--surface)}
+.dark .chart-card{background:var(--card-bg);box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.dark .tour-btn-prev{background:var(--surface);color:var(--text)}
+.dark .toast{box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.dark .progress-fill{background:linear-gradient(90deg,var(--primary),var(--primary-light))}
+.dark .hero{background:linear-gradient(135deg,var(--card-bg) 0%,var(--bg) 100%);border-bottom-color:var(--border)}
+.dark .nav-links a{color:#aab}
+.dark .nav-links a:hover{color:var(--primary-light)}
+.dark .spinner{border-color:rgba(255,255,255,.15);border-top-color:var(--primary-light)}
+.dark .loading-overlay{background:rgba(0,0,0,.5)}
+.dark .loading-overlay .loading-text{color:#aab}
+.dark .global-error-banner{background:#2a1a1a;border-color:#5a2a2a}
+.dark .kbd-hint{box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.dark .plotly-chart{background:var(--card-bg)}
 .nav{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1);position:sticky;top:0;z-index:100}
 .nav-inner{max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
 .nav-brand{font-weight:700;color:var(--primary);font-size:18px;display:flex;align-items:center;gap:8px}
 .nav-links{display:flex;gap:20px}
 .nav-links a{color:#666;text-decoration:none;font-size:14px;cursor:pointer}
 .nav-links a:hover{color:var(--primary)}
+.dark-toggle{width:36px;height:36px;border-radius:50%;border:2px solid #ddd;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;flex-shrink:0}
+.dark-toggle:hover{border-color:var(--primary);transform:scale(1.1)}
+.dark .dark-toggle{border-color:var(--input-border);background:var(--surface)}
+.nav-mobile-toggle{display:none!important;width:36px;height:36px;border-radius:6px;border:1px solid var(--input-border);background:transparent;cursor:pointer;align-items:center;justify-content:center;font-size:20px;color:var(--text)}
 .page{display:none;max-width:1200px;margin:0 auto;padding:24px 20px}
 .page.active{display:block}
-.card{background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:24px;margin-bottom:20px}
+.card{background:var(--card-bg);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:24px;margin-bottom:20px;transition:background .3s,box-shadow .3s}
 .btn{padding:10px 20px;border-radius:6px;border:none;cursor:pointer;font-weight:500;transition:all .2s;font-size:14px}
 .btn:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+.btn .btn-spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;margin-right:6px;vertical-align:-2px}
+.dark .btn-primary{box-shadow:0 2px 8px rgba(165,28,48,.3)}
 .btn-primary{background:var(--primary);color:#fff}
 .btn-secondary{background:var(--secondary);color:#fff}
 .btn-success{background:#27ae60;color:#fff}
 .btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
 .btn-sm{padding:6px 12px;font-size:12px}
 .btn-lg{padding:14px 28px;font-size:16px}
-.input{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none}
+.input{width:100%;padding:10px 14px;border:1px solid var(--input-border);border-radius:6px;font-size:14px;outline:none;background:var(--input-bg);color:var(--text);transition:border-color .2s,box-shadow .2s}
 .input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(165,28,48,.1)}
-select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 12px center #fff}
-label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#555}
+select.input{appearance:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 12px center var(--input-bg)}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--muted)}
 .badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .badge-blue{background:#e3f2fd;color:#1565c0}
 .badge-green{background:#e8f5e9;color:#2e7d32}
 .badge-red{background:#fce4ec;color:#c62828}
 .badge-orange{background:#fff3e0;color:#ef6c00}
+
+/* Enhanced Steps */
+.steps-container{display:flex;align-items:center;gap:0;margin-bottom:24px;padding:16px 0}
+.step-item{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:16px;left:55%;width:90%;height:3px;background:#e0e0e0;z-index:0}
+.step-item.done:not(:last-child)::after{background:var(--green)}
+.step-circle{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;z-index:1;transition:all .3s;background:#e0e0e0;color:#999}
+.step-item.done .step-circle{background:var(--green);color:#fff}
+.step-item.active .step-circle{background:var(--primary);color:#fff;box-shadow:0 0 0 4px rgba(165,28,48,.2)}
+.step-item.active .step-circle::after{content:'';position:absolute;width:36px;height:36px;border-radius:50%;border:2px solid var(--primary);animation:stepPulse 2s infinite}
+.step-label{margin-top:8px;font-size:12px;color:#999;text-align:center;font-weight:500}
+.step-item.done .step-label{color:var(--green);font-weight:600}
+.step-item.active .step-label{color:var(--primary);font-weight:600}
+@keyframes stepPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.3);opacity:0}}
+
 .step{display:flex;align-items:center;gap:12px;padding:16px;border-radius:8px;background:#f8f9fa;margin-bottom:12px}
 .step-num{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
 .step.done .step-num{background:#27ae60}
@@ -51,6 +125,12 @@ label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#555}
 .table td{padding:10px 12px;border-bottom:1px solid #f0f0f0;font-size:13px}
 .result-box{background:#f8f9fa;border-left:4px solid var(--primary);padding:16px;border-radius:0 8px 8px 0;margin:12px 0}
 .spinner{display:inline-block;width:20px;height:20px;border:3px solid rgba(0,0,0,.1);border-radius:50%;border-top-color:var(--primary);animation:spin .8s linear infinite}
+.loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,.7);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column}
+.loading-overlay.active{display:flex}
+.loading-overlay .spinner{width:40px;height:40px;border-width:4px}
+.loading-overlay .loading-text{margin-top:16px;font-size:14px;color:#666;font-weight:500}
+.global-error-banner{position:fixed;top:60px;left:50%;transform:translateX(-50%);max-width:500px;width:90%;padding:14px 20px;border-radius:8px;background:#fff3f3;border:1px solid #f5c6c6;color:#c62828;font-size:14px;z-index:9998;display:none;box-shadow:0 4px 16px rgba(0,0,0,.12);text-align:center}
+.global-error-banner.active{display:block;animation:slideIn .3s ease}
 @keyframes spin{to{transform:rotate(360deg)}}
 .hero{background:linear-gradient(135deg,#fff 0%,#fef7ed 100%);padding:60px 20px;text-align:center;border-bottom:1px solid #eee}
 .hero h1{font-size:36px;color:var(--primary);margin-bottom:12px}
@@ -58,76 +138,547 @@ label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#555}
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
 .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:16px}
-@media(max-width:768px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}.nav-links{display:none}}
+@media(max-width:768px){
+.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+.nav-links{display:none}
+.nav-inner{padding:10px 16px}
+.nav-mobile-toggle{display:flex!important}
+.nav-links.mobile-open{display:flex!important;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:var(--nav-bg);box-shadow:0 4px 12px rgba(0,0,0,.1);padding:12px 20px;gap:12px;z-index:99}
+.nav-links.mobile-open a{padding:8px 0;font-size:15px;border-bottom:1px solid var(--border)}
+.page{padding:16px 12px}
+.card{padding:16px}
+.hero{padding:40px 16px}
+.hero h1{font-size:26px}
+.hero p{font-size:15px}
+.hero div{flex-wrap:wrap;justify-content:center}
+.hero .btn-lg{padding:10px 18px;font-size:14px;width:100%;margin-bottom:8px}
+.steps-container{flex-wrap:wrap;gap:8px}
+.step-item:not(:last-child)::after{display:none}
+.step-item{min-width:60px}
+.step-label{font-size:10px}
+.detail-header{flex-direction:column}
+.detail-actions{width:100%}
+.detail-actions .btn{flex:1;text-align:center;font-size:12px;padding:8px 12px}
+.chart-grid{grid-template-columns:1fr}
+.chart-tabs{gap:2px}
+.chart-tab{padding:6px 10px;font-size:12px}
+.db-kpi-grid{grid-template-columns:repeat(2,1fr)}
+.db-card-body{padding:16px}
+.db-card-header{padding:14px 16px;flex-direction:column;text-align:center;gap:8px}
+.db-card-header .db-title{font-size:18px}
+.db-nav{gap:8px}
+.db-nav-btn{min-width:auto;padding:8px 16px;font-size:13px}
+.grid-2{gap:12px}
+.paper-preview{max-height:350px}
+.paper-section-nav{gap:4px}
+.paper-section-btn{padding:5px 10px;font-size:11px}
+.stat-value{font-size:20px}
+.export-btns{flex-direction:column}
+.export-btns .btn{width:100%}
+.tour-box{width:95%}
+.tour-header{padding:20px 20px 12px}
+.tour-body{padding:16px 20px}
+.tour-footer{padding:12px 20px 16px}
+.db-metric-table{font-size:12px}
+.db-metric-table th,.db-metric-table td{padding:8px 10px}
+}
+@media(max-width:480px){
+.hero h1{font-size:22px}
+.btn-lg{padding:10px 16px;font-size:13px}
+.stat-card{padding:12px}
+.stat-value{font-size:18px}
+.db-section-title{font-size:14px}
+}
 .tab-nav{display:flex;border-bottom:2px solid #eee;margin-bottom:20px}
-.tab-btn{padding:10px 20px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;font-size:14px;color:#666;transition:all .2s}
+.tab-btn{padding:10px 20px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;font-size:14px;color:#666;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none}
+.tab-btn:hover{color:var(--primary)}
 .tab-btn.active{border-color:var(--primary);color:var(--primary);font-weight:600}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 .file-row{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #f0f0f0}
 .file-row:hover{background:#fafafa}
 .toast{position:fixed;top:20px;right:20px;padding:12px 20px;border-radius:8px;color:#fff;font-size:14px;z-index:999;animation:slideIn .3s ease}
+.toast.info{background:var(--secondary)}
+.toast.warning{background:#e67e22}
+.toast .toast-close{margin-left:12px;background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:16px}
+.toast .toast-close:hover{color:#fff}
 .toast.success{background:#27ae60}
 .toast.error{background:#c62828}
 @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* Detail page enhancements */
+.detail-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:12px}
+.detail-actions{display:flex;gap:8px;flex-wrap:wrap}
+.stat-card{text-align:center;padding:16px;background:#f8f9fa;border-radius:8px}
+.stat-value{font-size:24px;font-weight:700;color:var(--primary)}
+.stat-label{font-size:12px;color:#888;margin-top:4px}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.chart-card{background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.chart-card img{width:100%;height:auto;display:block}
+.chart-card-body{padding:16px}
+.chart-card-title{font-weight:600;font-size:14px;margin-bottom:4px}
+.chart-card-desc{font-size:12px;color:#888}
+.paper-preview{background:#fafafa;border-radius:8px;padding:24px;max-height:500px;overflow-y:auto;font-family:'Times New Roman',Georgia,serif;line-height:1.8}
+.paper-preview h2{color:var(--secondary);margin-top:20px;margin-bottom:10px;font-size:18px;border-bottom:1px solid #eee;padding-bottom:6px}
+.paper-preview h3{color:#555;font-size:15px;margin-top:16px}
+.paper-preview p{margin:8px 0;font-size:14px}
+.paper-section-nav{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.paper-section-btn{padding:6px 14px;border-radius:20px;border:1px solid #ddd;background:#fff;cursor:pointer;font-size:12px;transition:all .2s}
+.paper-section-btn.active{background:var(--secondary);color:#fff;border-color:var(--secondary)}
+.paper-section-btn:hover{border-color:var(--secondary)}
+.empty-state{text-align:center;padding:40px 20px;color:#999}
+.empty-state-icon{font-size:48px;margin-bottom:12px}
+.empty-state-text{font-size:14px}
+.export-panel{background:linear-gradient(135deg,#f8f9fa,#fff);border-radius:8px;padding:20px;margin-top:16px;border:1px solid #eee}
+.export-panel h4{margin:0 0 12px;font-size:14px;color:#555}
+.export-btns{display:flex;gap:10px;flex-wrap:wrap}
+
+/* Keyboard shortcuts hint */
+.kbd-hint{position:fixed;bottom:20px;right:20px;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:12px 16px;font-size:12px;color:var(--muted);box-shadow:0 4px 16px rgba(0,0,0,.1);z-index:50;display:none}
+.kbd-hint.show{display:block;animation:slideIn .3s ease}
+.kbd-hint kbd{display:inline-block;padding:2px 6px;background:var(--surface);border:1px solid var(--border);border-radius:4px;font-family:monospace;font-size:11px;margin:0 2px}
+
+/* ========== Lancet Academic Typography ========== */
+body{font-family:'Palatino Linotype','Book Antiqua',Palatino,Georgia,'Times New Roman',serif}
+h1,h2,h3,h4,h5,h6{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.02em}
+p{line-height:1.75}
+.nav-brand{font-family:'Palatino Linotype','Book Antiqua',Palatino,serif;letter-spacing:0.02em}
+.lancet-rule{border:none;border-top:2.5px solid var(--primary);margin:24px 0;opacity:0.8}
+.lancet-cite{font-size:12px;color:#555;font-style:italic;line-height:1.6;padding:8px 0 8px 20px;border-left:3px solid #ddd;margin:8px 0}
+.lancet-ref{font-family:'Times New Roman',Georgia,serif;font-size:12px;color:#444;line-height:1.7;margin:6px 0;padding-left:28px;text-indent:-28px}
+.lancet-ref .ref-num{font-weight:700;color:var(--primary)}
+
+/* ========== Database Introduction Page ========== */
+.db-hero{text-align:center;padding:48px 20px 32px;background:linear-gradient(180deg,#fff 0%,var(--bg) 100%);border-bottom:3px solid var(--primary)}
+.db-hero h1{font-size:32px;color:var(--primary);margin-bottom:8px}
+.db-hero .subtitle{font-size:16px;color:#666;max-width:700px;margin:0 auto;line-height:1.7}
+.db-nav{display:flex;justify-content:center;gap:12px;margin:24px 0;flex-wrap:wrap}
+.db-nav-btn{padding:10px 24px;border-radius:6px;border:2px solid #ddd;background:#fff;cursor:pointer;font-size:14px;font-weight:600;transition:all .25s;min-width:160px}
+.db-nav-btn:hover{border-color:var(--primary);color:var(--primary)}
+.db-nav-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.db-card{background:#fff;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:0;overflow:hidden;margin-bottom:28px;border:1px solid #eee}
+.db-card-header{padding:20px 28px;border-bottom:2px solid var(--bg);display:flex;align-items:center;gap:16px}
+.db-card-header .db-icon{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0}
+.db-card-header .db-title{font-size:22px;font-weight:700;color:#222;margin-bottom:4px}
+.db-card-header .db-tagline{font-size:13px;color:#888}
+.db-card-body{padding:24px 28px}
+.db-section-title{font-size:16px;font-weight:700;color:var(--primary);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid #eee;display:flex;align-items:center;gap:8px}
+.db-section-title:first-child{margin-top:0}
+.db-kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin:12px 0}
+.db-kpi{text-align:center;padding:14px 8px;background:var(--bg);border-radius:8px;border:1px solid #f0e6d8}
+.db-kpi-value{font-size:20px;font-weight:700;color:var(--primary)}
+.db-kpi-label{font-size:11px;color:#888;margin-top:4px}
+.db-metric-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.db-metric-table th{background:#f8f5f0;padding:10px 14px;text-align:left;font-weight:600;color:#555;border-bottom:2px solid #e8e0d6;font-size:12px;text-transform:uppercase;letter-spacing:0.5px}
+.db-metric-table td{padding:10px 14px;border-bottom:1px solid #f0ebe5}
+.db-metric-table tr:hover{background:#faf7f3}
+.db-panel{background:#f8f5f0;border-radius:8px;padding:16px 20px;margin:12px 0;border:1px solid #e8e0d6}
+.db-panel-title{font-weight:600;font-size:13px;color:var(--primary);margin-bottom:6px}
+.db-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin:2px 4px}
+
+/* ========== Onboarding Tour ========== */
+.tour-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);z-index:10000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s}
+.tour-overlay.active{opacity:1;pointer-events:all}
+.tour-box{background:#fff;border-radius:14px;max-width:520px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;transform:translateY(20px);transition:transform .35s}
+.tour-overlay.active .tour-box{transform:translateY(0)}
+.tour-header{padding:28px 32px 16px;text-align:center;background:linear-gradient(135deg,var(--primary) 0%,#8B1525 100%);color:#fff}
+.tour-header h2{font-size:22px;margin-bottom:6px}
+.tour-header p{font-size:13px;opacity:0.85}
+.tour-body{padding:24px 32px}
+.tour-step-num{display:inline-block;width:30px;height:30px;border-radius:50%;background:var(--primary);color:#fff;text-align:center;line-height:30px;font-weight:700;font-size:14px;margin-bottom:10px}
+.tour-step-title{font-size:18px;font-weight:700;color:#222;margin-bottom:8px}
+.tour-step-desc{font-size:14px;color:#555;line-height:1.7}
+.tour-steps-indicator{display:flex;justify-content:center;gap:8px;margin-top:16px}
+.tour-dot{width:10px;height:10px;border-radius:50%;background:#ddd;transition:all .2s}
+.tour-dot.active{background:var(--primary);transform:scale(1.2)}
+.tour-footer{display:flex;justify-content:space-between;align-items:center;padding:16px 32px 24px}
+.tour-btn{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all .2s}
+.tour-btn-prev{background:#f0f0f0;color:#666}
+.tour-btn-prev:hover{background:#e0e0e0}
+.tour-btn-next{background:var(--primary);color:#fff}
+.tour-btn-next:hover{background:#8B1525}
+.tour-btn-skip{background:none;border:none;color:#999;cursor:pointer;font-size:13px;text-decoration:underline}
+.tour-btn-skip:hover{color:#666}
+
+/* ========== Plotly Chart Containers ========== */
+.plotly-chart{width:100%;min-height:380px;border-radius:8px;overflow:hidden;background:#fff}
+.plotly-chart-title{font-size:14px;font-weight:600;color:#333;padding:12px 16px 0}
+.plotly-chart-subtitle{font-size:12px;color:#888;padding:2px 16px 8px}
+
+/* ========== Interactive Charts Section ========== */
+.chart-tabs{display:flex;gap:4px;background:#f0ebe5;padding:4px;border-radius:8px;margin-bottom:16px;flex-wrap:wrap}
+.chart-tab{padding:8px 16px;border-radius:6px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:500;color:#666;transition:all .2s}
+.chart-tab.active{background:#fff;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.1);font-weight:600}
+.chart-tab:hover:not(.active){color:var(--primary)}
 </style>
 </head>
 <body>
 
 <!-- Navigation -->
 <nav class="nav">
-<div class="nav-inner">
+<div class="nav-inner" style="position:relative">
   <div class="nav-brand">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--primary)"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
     Cancer Research To Lancet
   </div>
-  <div class="nav-links">
+  <button class="nav-mobile-toggle" onclick="toggleMobileMenu()" aria-label="菜单">☰</button>
+  <div class="nav-links" id="navLinks">
     <a onclick="showPage('home')">首页</a>
+    <a onclick="showPage('databases')">数据库</a>
     <a onclick="showPage('wizard')">新建项目</a>
     <a onclick="showPage('projects')">我的项目</a>
     <a onclick="showPage('calculator')">PAF计算器</a>
     <a onclick="showPage('export')">导出中心</a>
     <a href="/api/docs" target="_blank">API</a>
+    <a onclick="startTour()" style="color:var(--primary);cursor:pointer" title="使用指南">?</a>
   </div>
+  <button class="dark-toggle" onclick="toggleDarkMode()" title="切换暗色模式 (Ctrl+D)" aria-label="切换暗色模式" id="darkModeBtn">🌙</button>
 </div>
 </nav>
 
 <!-- Toast -->
 <div id="toast" class="toast" style="display:none"></div>
 
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">加载中...</div>
+</div>
+
+<!-- Global Error Banner -->
+<div id="globalError" class="global-error-banner"></div>
+
+<!-- Keyboard Shortcuts Hint -->
+<div id="kbdHint" class="kbd-hint">
+  <b>快捷键</b><br>
+  <kbd>Ctrl</kbd>+<kbd>Enter</kbd> 运行分析<br>
+  <kbd>Ctrl</kbd>+<kbd>D</kbd> 暗色模式<br>
+  <kbd>Esc</kbd> 关闭提示
+</div>
+
+<!-- ========== ONBOARDING TOUR ========== -->
+<div id="tourOverlay" class="tour-overlay">
+<div class="tour-box">
+  <div class="tour-header">
+    <h2>🔬 Cancer Research Platform</h2>
+    <p>AI 驱动的肿瘤学数据分析平台 — 使用指南</p>
+  </div>
+  <div class="tour-body">
+    <div id="tourStepContent"></div>
+    <div class="tour-steps-indicator" id="tourIndicator"></div>
+  </div>
+  <div class="tour-footer">
+    <button class="tour-btn-skip" onclick="endTour()">跳过</button>
+    <div>
+      <button id="tourPrevBtn" class="tour-btn tour-btn-prev" onclick="tourPrev()" style="margin-right:8px;display:none">上一步</button>
+      <button id="tourNextBtn" class="tour-btn tour-btn-next" onclick="tourNext()">下一步</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ========== DATABASES PAGE ========== -->
+<div id="page-databases" class="page">
+<div class="db-hero">
+  <h1>核心数据源概览</h1>
+  <p class="subtitle">本平台整合了全球三大权威肿瘤流行病学数据库，为高质量的癌症研究提供坚实的数据基础</p>
+</div>
+
+<div style="max-width:1100px;margin:0 auto;padding:24px 20px">
+  <!-- Database Navigation Tabs -->
+  <div class="db-nav">
+    <button class="db-nav-btn active" onclick="showDbTab('all',this)">📋 全部概览</button>
+    <button class="db-nav-btn" onclick="showDbTab('globocan',this)">🌍 GLOBOCAN</button>
+    <button class="db-nav-btn" onclick="showDbTab('gbd',this)">📊 GBD</button>
+    <button class="db-nav-btn" onclick="showDbTab('ci5',this)">🗺️ CI5</button>
+  </div>
+
+  <!-- ALL OVERVIEW -->
+  <div id="db-tab-all" class="db-tab-content">
+    <div class="grid-3" style="margin-bottom:28px">
+      <div class="card" style="text-align:center;border-top:4px solid #A51C30">
+        <div style="font-size:36px;margin-bottom:8px">🌍</div>
+        <h3 style="color:var(--primary)">GLOBOCAN</h3>
+        <p style="font-size:13px;color:#666;margin:8px 0">全球癌症发病率与死亡率估计</p>
+        <p style="font-size:12px;color:#999">IARC / WHO · 185 个国家 · 36 种癌症</p>
+        <button class="btn btn-outline btn-sm" style="margin-top:12px" onclick="showDbTab('globocan',document.querySelectorAll('.db-nav-btn')[1])">查看详情 →</button>
+      </div>
+      <div class="card" style="text-align:center;border-top:4px solid #2166AC">
+        <div style="font-size:36px;margin-bottom:8px">📊</div>
+        <h3 style="color:var(--secondary)">GBD</h3>
+        <p style="font-size:13px;color:#666;margin:8px 0">全球疾病负担研究</p>
+        <p style="font-size:12px;color:#999">IHME · 204 个国家 · 369 种疾病</p>
+        <button class="btn btn-outline btn-sm" style="margin-top:12px" onclick="showDbTab('gbd',document.querySelectorAll('.db-nav-btn')[2])">查看详情 →</button>
+      </div>
+      <div class="card" style="text-align:center;border-top:4px solid #27ae60">
+        <div style="font-size:36px;margin-bottom:8px">🗺️</div>
+        <h3 style="color:#27ae60">CI5</h3>
+        <p style="font-size:13px;color:#666;margin:8px 0">五大洲癌症发病率</p>
+        <p style="font-size:12px;color:#999">IARC · 50 个注册处 · 时间趋势数据</p>
+        <button class="btn btn-outline btn-sm" style="margin-top:12px" onclick="showDbTab('ci5',document.querySelectorAll('.db-nav-btn')[3])">查看详情 →</button>
+      </div>
+    </div>
+
+    <!-- Comparison table -->
+    <div class="card">
+      <h3 style="margin-bottom:16px;font-size:18px">三大数据库对比</h3>
+      <table class="db-metric-table">
+        <thead>
+          <tr>
+            <th>特征</th>
+            <th style="border-left:3px solid #A51C30">GLOBOCAN</th>
+            <th style="border-left:3px solid #2166AC">GBD</th>
+            <th style="border-left:3px solid #27ae60">CI5</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><b>管理机构</b></td><td>IARC (WHO)</td><td>IHME (华盛顿大学)</td><td>IARC (WHO)</td></tr>
+          <tr><td><b>覆盖范围</b></td><td>185 个国家/地区</td><td>204 个国家/地区</td><td>50 个癌症登记处</td></tr>
+          <tr><td><b>癌症种类</b></td><td>36 种 (按部位)</td><td>29 组癌症</td><td>按 ICD-10 分类</td></tr>
+          <tr><td><b>核心指标</b></td><td>发病率、死亡率、患病率、ASR</td><td>发病率、死亡率、YLL、YLD、DALY</td><td>发病率、ASR、时间趋势</td></tr>
+          <tr><td><b>数据类型</b></td><td>估计值 (Estimates)</td><td>估计值 + 不确定区间</td><td>观测值 (Observed)</td></tr>
+          <tr><td><b>时间跨度</b></td><td>2022 (最新); 每2-3年更新</td><td>1990-2021; 年度更新</td><td>多期 (Vols I-XII)</td></tr>
+          <tr><td><b>年龄标准化</b></td><td>世界标准人口 (Segi)</td><td>GBD 世界标准人口</td><td>世界标准人口 (Segi)</td></tr>
+          <tr><td><b>优势</b></td><td>全球可比、权威估计</td><td>多疾病可比、趋势数据</td><td>长期趋势、登记处级别</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- GLOBOCAN DETAIL -->
+  <div id="db-tab-globocan" class="db-tab-content" style="display:none">
+    <div class="db-card">
+      <div class="db-card-header">
+        <div class="db-icon" style="background:linear-gradient(135deg,#fce4ec,#fff)">🌍</div>
+        <div>
+          <div class="db-title" style="color:#A51C30">GLOBOCAN — Global Cancer Observatory</div>
+          <div class="db-tagline">International Agency for Research on Cancer (IARC), World Health Organization</div>
+        </div>
+      </div>
+      <div class="db-card-body">
+
+        <div class="db-section-title">▎ 数据库简介</div>
+        <p>GLOBOCAN 是由国际癌症研究机构 (IARC, WHO 下属) 维护的全球癌症统计数据库。它提供 185 个国家和地区、36 种癌症部位的最新癌症发病率和死亡率估计值。GLOBOCAN 2022 (最新版本) 基于各国癌症登记数据和统计建模方法，为全球癌症负担评估提供标准化的可比数据。</p>
+        <p>与直接观测数据不同，GLOBOCAN 的核心价值在于其对数据缺失地区的科学估算，使研究者能够在统一框架下比较不同国家和地区的癌症负担。</p>
+
+        <div class="db-section-title">▎ 核心指标</div>
+        <div class="db-kpi-grid">
+          <div class="db-kpi"><div class="db-kpi-value">185</div><div class="db-kpi-label">覆盖国家/地区</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">36</div><div class="db-kpi-label">癌症部位分类</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">2022</div><div class="db-kpi-label">最新数据年份</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">20M</div><div class="db-kpi-label">新发病例 (2022)</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">9.7M</div><div class="db-kpi-label">死亡病例 (2022)</div></div>
+        </div>
+
+        <table class="db-metric-table">
+          <thead><tr><th>指标</th><th>说明</th><th>单位</th></tr></thead>
+          <tbody>
+            <tr><td><b>ASR (W)</b></td><td>年龄标准化发病率/死亡率 (世界标准)</td><td>每 10 万人</td></tr>
+            <tr><td><b>Crude Rate</b></td><td>粗发病率/死亡率</td><td>每 10 万人</td></tr>
+            <tr><td><b>Cum. Risk</b></td><td>0-74 岁累积发病/死亡风险</td><td>%</td></tr>
+            <tr><td><b>Prevalence</b></td><td>5 年患病率</td><td>人数 / 每 10 万人</td></tr>
+            <tr><td><b>MI Ratio</b></td><td>死亡/发病比</td><td>比值</td></tr>
+          </tbody>
+        </table>
+
+        <div class="db-section-title">▎ 数据获取与使用方法</div>
+        <div class="db-panel">
+          <div class="db-panel-title">数据来源</div>
+          <p style="font-size:13px;margin:0">GLOBOCAN 数据通过 IARC Global Cancer Observatory 网站公开访问：<b>https://gco.iarc.fr</b>。支持在线查询、数据下载 (CSV/Excel) 及 API 接入。本平台的 GLOBOCAN 数据模块可自动解析下载的数据文件并标准化为统一格式。</p>
+        </div>
+
+        <div class="db-section-title">▎ 代表性论文</div>
+        <div class="lancet-ref"><span class="ref-num">[1]</span> Bray F, Laversanne M, Sung H, et al. Global cancer statistics 2022: GLOBOCAN estimates of incidence and mortality worldwide for 36 cancers in 185 countries. <i>CA Cancer J Clin</i>. 2024;74(3):229-263. doi:10.3322/caac.21834</div>
+        <div class="lancet-ref"><span class="ref-num">[2]</span> Sung H, Ferlay J, Siegel RL, et al. Global Cancer Statistics 2020: GLOBOCAN Estimates of Incidence and Mortality Worldwide for 36 Cancers in 185 Countries. <i>CA Cancer J Clin</i>. 2021;71(3):209-249. doi:10.3322/caac.21660</div>
+        <div class="lancet-ref"><span class="ref-num">[3]</span> Ferlay J, Ervik M, Lam F, et al. Global Cancer Observatory: Cancer Today. Lyon: International Agency for Research on Cancer; 2024. Available from: https://gco.iarc.fr/today</div>
+        <div class="lancet-ref"><span class="ref-num">[4]</span> Ferlay J, Colombet M, Soerjomataram I, et al. Cancer statistics for the year 2020: An overview. <i>Int J Cancer</i>. 2021;149(4):778-789.</div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- GBD DETAIL -->
+  <div id="db-tab-gbd" class="db-tab-content" style="display:none">
+    <div class="db-card">
+      <div class="db-card-header">
+        <div class="db-icon" style="background:linear-gradient(135deg,#e3f2fd,#fff)">📊</div>
+        <div>
+          <div class="db-title" style="color:#2166AC">GBD — Global Burden of Disease Study</div>
+          <div class="db-tagline">Institute for Health Metrics and Evaluation (IHME), University of Washington</div>
+        </div>
+      </div>
+      <div class="db-card-body">
+
+        <div class="db-section-title">▎ 数据库简介</div>
+        <p>全球疾病负担研究 (GBD) 是由华盛顿大学健康指标与评估研究所 (IHME) 主持的全球最大的流行病学研究项目之一。GBD 不仅覆盖癌症，还系统评估了 369 种疾病和伤害、以及 87 种风险因素对全球健康的影响。</p>
+        <p>GBD 的独特优势在于其统一的分析框架和不确定性量化。对于每项估计，GBD 均提供 95% 不确定区间 (UI)，使得跨时间、跨地域、跨疾病的比较更加严谨。GBD 2021 (最新) 覆盖 1990-2021 年间 204 个国家和地区的数据。</p>
+
+        <div class="db-section-title">▎ 核心指标</div>
+        <div class="db-kpi-grid">
+          <div class="db-kpi"><div class="db-kpi-value">204</div><div class="db-kpi-label">覆盖国家/地区</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">369</div><div class="db-kpi-label">疾病与伤害</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">87</div><div class="db-kpi-label">风险因素</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">32Y</div><div class="db-kpi-label">时间跨度 (1990-2021)</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">11,000+</div><div class="db-kpi-label">合作研究者</div></div>
+        </div>
+
+        <table class="db-metric-table">
+          <thead><tr><th>指标</th><th>说明</th><th>单位</th></tr></thead>
+          <tbody>
+            <tr><td><b>Incidence Rate</b></td><td>发病率 (年龄标准化)</td><td>每 10 万人</td></tr>
+            <tr><td><b>Mortality Rate</b></td><td>死亡率 (年龄标准化)</td><td>每 10 万人</td></tr>
+            <tr><td><b>YLL</b></td><td>因早逝损失的生命年 (Years of Life Lost)</td><td>人年</td></tr>
+            <tr><td><b>YLD</b></td><td>因残疾损失的健康年 (Years Lived with Disability)</td><td>人年</td></tr>
+            <tr><td><b>DALY</b></td><td>伤残调整生命年 (YLL + YLD)</td><td>人年</td></tr>
+            <tr><td><b>Prevalence</b></td><td>患病率 (人数)</td><td>每 10 万人</td></tr>
+            <tr><td><b>PAF</b></td><td>人群归因分数 (风险因素归因)</td><td>%</td></tr>
+          </tbody>
+        </table>
+
+        <div class="db-section-title">▎ 数据获取与使用方法</div>
+        <div class="db-panel">
+          <div class="db-panel-title">数据来源</div>
+          <p style="font-size:13px;margin:0">GBD 数据通过 IHME Global Health Data Exchange (GHDx) 平台公开：<b>https://ghdx.healthdata.org</b>。提供可视化工具 (GBD Compare) 和批量数据下载。本平台支持导入 GBD 的 CSV 格式数据，并自动完成指标标准化。</p>
+        </div>
+
+        <div class="db-section-title">▎ 代表性论文</div>
+        <div class="lancet-ref"><span class="ref-num">[1]</span> GBD 2021 Cancer Collaboration. Global, regional, and national burden of cancer and its attributable risk factors, 2010-2021: a systematic analysis for the Global Burden of Disease Study 2021. <i>Lancet Oncol</i>. 2024;25(8):1045-1069.</div>
+        <div class="lancet-ref"><span class="ref-num">[2]</span> GBD 2019 Diseases and Injuries Collaborators. Global burden of 369 diseases and injuries in 204 countries and territories, 1990-2019: a systematic analysis for the Global Burden of Disease Study 2019. <i>Lancet</i>. 2020;396(10258):1204-1222.</div>
+        <div class="lancet-ref"><span class="ref-num">[3]</span> GBD 2019 Risk Factors Collaborators. Global burden of 87 risk factors in 204 countries and territories, 1990-2019: a systematic analysis for the Global Burden of Disease Study 2019. <i>Lancet</i>. 2020;396(10258):1223-1249.</div>
+        <div class="lancet-ref"><span class="ref-num">[4]</span> Murray CJL, Lopez AD. Measuring the global burden of disease. <i>N Engl J Med</i>. 2013;369(5):448-457.</div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CI5 DETAIL -->
+  <div id="db-tab-ci5" class="db-tab-content" style="display:none">
+    <div class="db-card">
+      <div class="db-card-header">
+        <div class="db-icon" style="background:linear-gradient(135deg,#e8f5e9,#fff)">🗺️</div>
+        <div>
+          <div class="db-title" style="color:#27ae60">CI5 — Cancer Incidence in Five Continents</div>
+          <div class="db-tagline">International Agency for Research on Cancer (IARC), World Health Organization</div>
+        </div>
+      </div>
+      <div class="db-card-body">
+
+        <div class="db-section-title">▎ 数据库简介</div>
+        <p>《五大洲癌症发病率》(Cancer Incidence in Five Continents, CI5) 是 IARC 和国际癌症登记协会 (IACR) 联合出版的权威系列出版物，自 1966 年首版以来已出版至第 XII 卷。CI5 收集并审核全球各地以人群为基础的癌症登记处报告的发病率数据。</p>
+        <p>CI5 的独特价值在于其严格的数据质量标准。只有通过 IARC/IACR 审核的登记处数据才能被收录，这确保了数据的高质量和国际可比性。CI5 特别适合用于长期趋势分析和跨地域发病率比较研究。</p>
+
+        <div class="db-section-title">▎ 核心指标</div>
+        <div class="db-kpi-grid">
+          <div class="db-kpi"><div class="db-kpi-value">50+</div><div class="db-kpi-label">癌症登记处</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">XII</div><div class="db-kpi-label">最新卷数</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">1966</div><div class="db-kpi-label">首版年份</div></div>
+          <div class="db-kpi"><div class="db-kpi-value">5</div><div class="db-kpi-label">覆盖大洲</div></div>
+        </div>
+
+        <table class="db-metric-table">
+          <thead><tr><th>指标</th><th>说明</th><th>单位</th></tr></thead>
+          <tbody>
+            <tr><td><b>ASR (W)</b></td><td>年龄标准化发病率 (世界标准人口)</td><td>每 10 万人</td></tr>
+            <tr><td><b>ASR (E)</b></td><td>年龄标准化发病率 (欧洲标准人口)</td><td>每 10 万人</td></tr>
+            <tr><td><b>Crude Rate</b></td><td>粗发病率</td><td>每 10 万人</td></tr>
+            <tr><td><b>Cum. Risk</b></td><td>0-74 岁累积发病风险</td><td>%</td></tr>
+            <tr><td><b>Cases (N)</b></td><td>新发病例数</td><td>例</td></tr>
+            <tr><td><b>MPCR</b></td><td>形态学编码比 (数据质量指标)</td><td>%</td></tr>
+          </tbody>
+        </table>
+
+        <div class="db-section-title">▎ 数据获取与使用方法</div>
+        <div class="db-panel">
+          <div class="db-panel-title">数据来源</div>
+          <p style="font-size:13px;margin:0">CI5 数据通过 IARC 官网公开下载：<b>https://ci5.iarc.fr</b>。每卷数据可下载为 Excel 或文本格式。本平台的 CI5 数据模块专注于提取各登记处的时间趋势数据，可用于 Joinpoint 回归分析和 APC 计算。</p>
+        </div>
+
+        <div class="db-section-title">▎ 代表性论文</div>
+        <div class="lancet-ref"><span class="ref-num">[1]</span> Bray F, Colombet M, Mery L, et al. (eds). Cancer Incidence in Five Continents, Vol. XII. IARC Scientific Publication No. 166. Lyon: International Agency for Research on Cancer; 2024.</div>
+        <div class="lancet-ref"><span class="ref-num">[2]</span> Forman D, Bray F, Brewster DH, et al. Cancer Incidence in Five Continents, Vol. X. IARC Scientific Publication No. 164. Lyon: International Agency for Research on Cancer; 2014.</div>
+        <div class="lancet-ref"><span class="ref-num">[3]</span> Parkin DM, Whelan SL, Ferlay J, et al. Cancer Incidence in Five Continents, Vol. VII. IARC Scientific Publication No. 143. Lyon: International Agency for Research on Cancer; 1997.</div>
+        <div class="lancet-ref"><span class="ref-num">[4]</span> Bray F, Ferlay J, Laversanne M, et al. Cancer Incidence in Five Continents: Inclusion criteria, highlights from Volume X and the global status of cancer registration. <i>Int J Cancer</i>. 2015;137(9):2060-2071.</div>
+
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
 <!-- ========== HOME PAGE ========== -->
 <div id="page-home" class="page active">
 <div class="hero">
-  <h1>Cancer Epidemiology Research To Lancet</h1>
-  <p>AI驱动的肿瘤学数据分析平台 — 从全球数据到Lancet论文</p>
+  <h1 style="font-family:'Palatino Linotype',Georgia,serif;letter-spacing:0.01em">Cancer Epidemiology Research <span style="font-size:28px">To Lancet</span></h1>
+  <p style="font-size:17px;color:#555;max-width:650px;margin:0 auto 32px;line-height:1.8">AI 驱动的肿瘤学数据分析平台 — 从全球数据到 <i>The Lancet</i> 论文<br><span style="font-size:14px;color:#999">Integrating GLOBOCAN · GBD · CI5</span></p>
   <div style="display:flex;gap:12px;justify-content:center">
-    <button class="btn btn-primary btn-lg" onclick="runFullDemo()">一键运行演示</button>
-    <button class="btn btn-secondary btn-lg" onclick="showPage('wizard')">创建新项目</button>
+    <button class="btn btn-primary btn-lg" onclick="runFullDemo()" style="border-radius:8px;font-size:15px">▶ 一键运行演示</button>
+    <button class="btn btn-secondary btn-lg" onclick="showPage('wizard')" style="border-radius:8px;font-size:15px">创建新项目</button>
+    <button class="btn btn-outline btn-lg" onclick="startTour()" style="border-radius:8px;font-size:15px">📖 使用指南</button>
   </div>
 </div>
 <div style="max-width:1200px;margin:40px auto;padding:0 20px">
+  <!-- Lancet-style divider -->
+  <div style="text-align:center;margin-bottom:32px">
+    <hr class="lancet-rule" style="max-width:120px;margin:0 auto 16px">
+    <p style="font-size:13px;color:#888;font-style:italic;text-transform:uppercase;letter-spacing:2px">Research Workflow</p>
+  </div>
   <div class="grid-4">
-    <div class="card" style="text-align:center">
+    <div class="card" style="text-align:center;border-top:3px solid var(--primary)">
       <div style="font-size:32px;margin-bottom:8px">📊</div>
-      <h3 style="margin-bottom:4px">数据整合</h3>
-      <p style="font-size:13px;color:#666">GLOBOCAN / GBD / CI5</p>
+      <h3 style="margin-bottom:4px;font-size:15px">Data Integration</h3>
+      <p style="font-size:12px;color:#888">GLOBOCAN / GBD / CI5<br>数据整合与标准化</p>
     </div>
-    <div class="card" style="text-align:center">
+    <div class="card" style="text-align:center;border-top:3px solid var(--secondary)">
       <div style="font-size:32px;margin-bottom:8px">📈</div>
-      <h3 style="margin-bottom:4px">统计分析</h3>
-      <p style="font-size:13px;color:#666">PAF / Joinpoint / ASR</p>
+      <h3 style="margin-bottom:4px;font-size:15px">Statistical Analysis</h3>
+      <p style="font-size:12px;color:#888">PAF / Joinpoint / ASR<br>多维度统计分析</p>
     </div>
-    <div class="card" style="text-align:center">
+    <div class="card" style="text-align:center;border-top:3px solid #27ae60">
       <div style="font-size:32px;margin-bottom:8px">📉</div>
-      <h3 style="margin-bottom:4px">可视化</h3>
-      <p style="font-size:13px;color:#666">Lancet风格图表</p>
+      <h3 style="margin-bottom:4px;font-size:15px">Visualization</h3>
+      <p style="font-size:12px;color:#888">Lancet 风格图表<br>交互式 Plotly 图表</p>
     </div>
-    <div class="card" style="text-align:center">
+    <div class="card" style="text-align:center;border-top:3px solid #e67e22">
       <div style="font-size:32px;margin-bottom:8px">📝</div>
-      <h3 style="margin-bottom:4px">论文生成</h3>
-      <p style="font-size:13px;color:#666">符合Lancet标准</p>
+      <h3 style="margin-bottom:4px;font-size:15px">Paper Generation</h3>
+      <p style="font-size:12px;color:#888">符合 Lancet 标准<br>自动生成论文草稿</p>
     </div>
   </div>
+
+  <!-- Interactive Plotly Demo Chart -->
+  <div style="text-align:center;margin:48px 0 32px">
+    <hr class="lancet-rule" style="max-width:120px;margin:0 auto 16px">
+    <p style="font-size:13px;color:#888;font-style:italic;text-transform:uppercase;letter-spacing:2px">Interactive Preview</p>
+    <h2 style="margin-top:8px;font-size:22px">Global Cancer Burden Overview</h2>
+    <p style="font-size:14px;color:#666">以下交互式图表展示全球主要癌症负担数据 (可缩放、悬停查看详情)</p>
+  </div>
+  <div class="card" style="padding:20px">
+    <div id="homePlotlyChart" class="plotly-chart"></div>
+  </div>
+
+  <!-- Database quick access -->
+  <div style="text-align:center;margin:48px 0 32px">
+    <hr class="lancet-rule" style="max-width:120px;margin:0 auto 16px">
+    <p style="font-size:13px;color:#888;font-style:italic;text-transform:uppercase;letter-spacing:2px">Data Sources</p>
+  </div>
+  <div class="grid-3" style="margin-bottom:32px">
+    <div class="card" style="cursor:pointer;border-left:4px solid #A51C30" onclick="showPage('databases')">
+      <h3 style="font-size:15px;color:#A51C30">🌍 GLOBOCAN 2022</h3>
+      <p style="font-size:13px;color:#666;margin:8px 0">185 个国家 · 36 种癌症<br>全球癌症发病率与死亡率估计</p>
+      <p style="font-size:12px;color:var(--primary)">查看详情 →</p>
+    </div>
+    <div class="card" style="cursor:pointer;border-left:4px solid #2166AC" onclick="showPage('databases')">
+      <h3 style="font-size:15px;color:#2166AC">📊 GBD 2021</h3>
+      <p style="font-size:13px;color:#666;margin:8px 0">204 个国家 · 369 种疾病<br>全球疾病负担研究</p>
+      <p style="font-size:12px;color:var(--secondary)">查看详情 →</p>
+    </div>
+    <div class="card" style="cursor:pointer;border-left:4px solid #27ae60" onclick="showPage('databases')">
+      <h3 style="font-size:15px;color:#27ae60">🗺️ CI5 Vol. XII</h3>
+      <p style="font-size:13px;color:#666;margin:8px 0">50 个登记处 · 5 大洲<br>五大洲癌症发病率</p>
+      <p style="font-size:12px;color:#27ae60">查看详情 →</p>
+    </div>
+  </div>
+
   <!-- Demo Result -->
   <div id="demoResult" style="display:none;margin-top:30px">
     <h2 style="text-align:center;margin-bottom:20px">演示结果</h2>
@@ -242,16 +793,24 @@ label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#555}
 
 <!-- ========== PROJECT DETAIL PAGE ========== -->
 <div id="page-detail" class="page">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+<!-- Header with back link, title and action buttons -->
+<div class="detail-header">
   <div>
-    <a onclick="showPage('projects')" style="color:var(--primary);cursor:pointer;font-size:13px">← 返回项目列表</a>
+    <a onclick="showPage('projects')" style="color:var(--primary);cursor:pointer;font-size:13px;text-decoration:none">← 返回项目列表</a>
     <h2 id="detail-title" style="margin-top:8px"></h2>
+    <span id="detail-status-badge"></span>
+    <span id="detail-meta" style="font-size:13px;color:#888;margin-left:12px"></span>
   </div>
-  <div id="detail-actions"></div>
+  <div class="detail-actions" id="detail-actions"></div>
 </div>
-<!-- Steps -->
-<div id="detail-steps"></div>
-<!-- Content -->
+
+<!-- Steps Progress Bar -->
+<div class="card" style="padding:16px 24px">
+  <div id="detail-steps" class="steps-container"></div>
+  <div class="progress-bar"><div id="detail-progress" class="progress-fill" style="width:0%"></div></div>
+</div>
+
+<!-- Config + Data row -->
 <div class="grid-2">
   <div>
     <div class="card" id="detail-config"></div>
@@ -259,10 +818,17 @@ label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#555}
   </div>
   <div>
     <div class="card" id="detail-analysis"></div>
-    <div class="card" id="detail-charts"></div>
   </div>
 </div>
+
+<!-- Charts Section -->
+<div class="card" id="detail-charts"></div>
+
+<!-- Paper Preview Section -->
 <div class="card" id="detail-paper"></div>
+
+<!-- Export Section -->
+<div class="card" id="detail-export"></div>
 </div>
 
 <!-- ========== CALCULATOR PAGE ========== -->
@@ -329,18 +895,132 @@ const API='';
 let projects=[];
 let currentPid=null;
 
+// ========== API Cache ==========
+const apiCache = new Map();
+const CACHE_TTL = 60000; // 60 seconds
+
+function getCachedResponse(url) {
+  const entry = apiCache.get(url);
+  if (entry && Date.now() - entry.ts < CACHE_TTL) return entry.data;
+  return null;
+}
+
+function setCacheResponse(url, data) {
+  // Limit cache size to 50 entries
+  if (apiCache.size > 50) {
+    const oldest = apiCache.keys().next().value;
+    apiCache.delete(oldest);
+  }
+  apiCache.set(url, { data, ts: Date.now() });
+}
+
+function clearCache(urlPrefix) {
+  if (!urlPrefix) { apiCache.clear(); return; }
+  for (const key of apiCache.keys()) {
+    if (key.includes(urlPrefix)) apiCache.delete(key);
+  }
+}
+
+// ========== Loading State ==========
+let loadingCount = 0;
+function showLoading(text) {
+  loadingCount++;
+  document.getElementById('loadingText').textContent = text || '加载中...';
+  document.getElementById('loadingOverlay').classList.add('active');
+}
+function hideLoading() {
+  loadingCount = Math.max(0, loadingCount - 1);
+  if (loadingCount === 0) {
+    document.getElementById('loadingOverlay').classList.remove('active');
+  }
+}
+
+// ========== Error Display ==========
+function showGlobalError(msg) {
+  const el = document.getElementById('globalError');
+  el.innerHTML = '⚠️ ' + msg + '<span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:18px" onclick="this.parentElement.classList.remove(\'active\')">×</span>';
+  el.classList.add('active');
+  setTimeout(() => el.classList.remove('active'), 8000);
+}
+
+// ========== Cached Fetch Wrapper ==========
+async function cachedFetch(url, options = {}) {
+  const method = (options.method || 'GET').toUpperCase();
+  const isGet = method === 'GET';
+
+  // Check cache for GET requests
+  if (isGet) {
+    const cached = getCachedResponse(url);
+    if (cached) return cached;
+  }
+
+  // For POST/DELETE, invalidate related cache entries
+  if (!isGet) {
+    clearCache(url.split('?')[0]);
+  }
+
+  try {
+    const res = await fetch(url, options);
+
+    if (!res.ok) {
+      let errMsg = '请求失败';
+      try {
+        const errData = await res.json();
+        errMsg = errData.detail || errData.message || errMsg;
+      } catch (_) {}
+      if (res.status === 404) errMsg = '资源不存在: ' + errMsg;
+      else if (res.status >= 500) errMsg = '服务器错误: ' + errMsg;
+      else if (res.status === 400) errMsg = '参数错误: ' + errMsg;
+      throw new Error(errMsg);
+    }
+
+    const data = await res.json();
+    if (isGet) setCacheResponse(url, data);
+    return data;
+  } catch (e) {
+    if (e.name === 'TypeError' && e.message.includes('fetch')) {
+      throw new Error('网络连接失败，请检查网络');
+    }
+    throw e;
+  }
+}
+
+// ========== Dark Mode ==========
+function toggleDarkMode() {
+  document.body.classList.toggle('dark');
+  const isDark = document.body.classList.contains('dark');
+  localStorage.setItem('cancer_dark_mode', isDark ? '1' : '');
+  document.getElementById('darkModeBtn').textContent = isDark ? '☀️' : '🌙';
+}
+
+function initDarkMode() {
+  if (localStorage.getItem('cancer_dark_mode') === '1') {
+    document.body.classList.add('dark');
+    document.getElementById('darkModeBtn').textContent = '☀️';
+  }
+}
+
+// ========== Mobile Menu ==========
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('mobile-open');
+}
+
 // ========== Navigation ==========
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('navLinks').classList.remove('mobile-open');
   if(name==='projects') loadProjects();
   if(name==='export') loadExportProjects();
+  window.scrollTo(0, 0);
 }
 
 function toast(msg,type='success'){
   const t=document.getElementById('toast');
-  t.textContent=msg;t.className='toast '+type;t.style.display='block';
-  setTimeout(()=>t.style.display='none',3000);
+  t.innerHTML=msg+'<button class="toast-close" onclick="this.parentElement.style.display=\'none\'">×</button>';
+  t.className='toast '+type;t.style.display='block';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.style.display='none',4000);
 }
 
 // ========== Chip Selection ==========
@@ -354,6 +1034,7 @@ function getSelected(containerId){
 
 // ========== Create Project ==========
 async function createProject(){
+  const btn = event.target.closest('.btn');
   const data={
     title:document.getElementById('wiz-title').value,
     description:document.getElementById('wiz-desc').value,
@@ -367,25 +1048,40 @@ async function createProject(){
   if(!data.cancer_types.length){toast('请选择癌症类型','error');return;}
   if(!data.countries.length){toast('请选择国家','error');return;}
   try{
-    const res=await fetch(API+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-    const proj=await res.json();
+    setBtnLoading(btn, true);
+    showLoading('创建项目中...');
+    const proj = await cachedFetch(API+'/api/projects',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
     toast('项目创建成功！');
     currentPid=proj.id;
-    // Auto load sample data
-    await fetch(API+'/api/sample/load/'+proj.id,{method:'POST'});
+    showLoading('加载示例数据...');
+    await cachedFetch(API+'/api/sample/load/'+proj.id,{method:'POST'});
+    clearCache('/api/projects');
     toast('示例数据已加载');
     showProjectDetail(proj.id);
-  }catch(e){toast('创建失败: '+e.message,'error');}
+  }catch(e){showGlobalError('创建失败: '+e.message);toast('创建失败: '+e.message,'error');}
+  finally{setBtnLoading(btn, false); hideLoading();}
+}
+
+// ========== Button Loading State ==========
+function setBtnLoading(btn, loading) {
+  if (!btn) return;
+  if (loading) {
+    btn.disabled = true;
+    btn._originalHtml = btn.innerHTML;
+    btn.innerHTML = '<span class="btn-spinner"></span>' + btn.textContent.trim();
+  } else {
+    btn.disabled = false;
+    if (btn._originalHtml) btn.innerHTML = btn._originalHtml;
+  }
 }
 
 // ========== Projects List ==========
 async function loadProjects(){
   try{
-    const res=await fetch(API+'/api/projects');
-    const data=await res.json();
+    const data = await cachedFetch(API+'/api/projects');
     projects=data.projects||[];
     renderProjects();
-  }catch(e){console.error(e);}
+  }catch(e){console.error(e);showGlobalError('加载项目列表失败: '+e.message);}
 }
 
 function renderProjects(){
@@ -406,123 +1102,646 @@ function renderProjects(){
 }
 
 // ========== Project Detail ==========
-async function showProjectDetail(pid){
-  currentPid=pid;
-  showPage('detail');
-  try{
-    const res=await fetch(API+'/api/projects/'+pid);
-    const proj=await res.json();
+const STEP_DEFS = [
+  { key: 'created',       label: '创建项目', desc: '配置研究参数' },
+  { key: 'data_uploaded', label: '数据上传', desc: 'CSV/Excel 或示例数据' },
+  { key: 'analyzed',      label: '统计分析', desc: 'PAF / 趋势 / Joinpoint' },
+  { key: 'visualized',    label: '可视化',   desc: '生成 Lancet 风格图表' },
+  { key: 'completed',     label: '论文生成', desc: '导出 Markdown / Word' }
+];
+const STATUS_ORDER = { created:1, data_uploaded:2, analyzed:3, visualized:4, completed:5 };
+
+function renderDetailSteps(currentStep) {
+  const pct = Math.round(((currentStep - 1) / (STEP_DEFS.length - 1)) * 100);
+  document.getElementById('detail-progress').style.width = pct + '%';
+  
+  let html = '';
+  STEP_DEFS.forEach((s, i) => {
+    const stepNum = i + 1;
+    let cls = 'step-item';
+    if (stepNum < currentStep) cls += ' done';
+    if (stepNum === currentStep) cls += ' active';
     
-    document.getElementById('detail-title').textContent=proj.title;
+    const icon = stepNum < currentStep
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg>'
+      : stepNum;
+    
+    html += `<div class="${cls}">
+      <div class="step-circle">${icon}</div>
+      <div class="step-label">${s.label}</div>
+    </div>`;
+  });
+  return html;
+}
+
+function getActionButtons(step, pid) {
+  let btns = '';
+  if (step <= 1) {
+    btns += `<button class="btn btn-primary btn-sm" onclick="loadSampleData('${pid}')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      加载示例数据
+    </button>`;
+  }
+  if (step === 2) {
+    btns += `<button class="btn btn-primary btn-sm" onclick="runAnalysis('${pid}')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      运行分析
+    </button>`;
+  }
+  if (step === 3) {
+    btns += `<button class="btn btn-primary btn-sm" onclick="runVisualize('${pid}')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      生成图表
+    </button>`;
+  }
+  if (step === 4) {
+    btns += `<button class="btn btn-primary btn-sm" onclick="runPaper('${pid}')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      生成论文
+    </button>`;
+  }
+  if (step >= 2 && step < 5) {
+    btns += `<button class="btn btn-success btn-sm" onclick="runAll('${pid}')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><polygon points="5,3 19,12 5,21"/></svg>
+      一键完成全部
+    </button>`;
+  }
+  return btns;
+}
+
+function renderPAFTable(pafResults) {
+  if (!pafResults || !pafResults.length) return '<p style="color:#999">暂无 PAF 结果</p>';
+  
+  // Sort by PAF descending
+  const sorted = [...pafResults].sort((a, b) => b.paf - a.paf);
+  const maxPaf = Math.max(...sorted.map(r => r.paf));
+  
+  let html = `
+    <h3 style="margin-bottom:12px;font-size:16px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-3px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      PAF 分析结果
+    </h3>
+    <table class="table">
+      <thead><tr>
+        <th style="width:30%">风险因素</th>
+        <th style="width:15%;text-align:center">PAF</th>
+        <th style="width:20%;text-align:center">95% CI</th>
+        <th style="width:35%">贡献度</th>
+      </tr></thead>
+      <tbody>`;
+  
+  sorted.forEach(r => {
+    const pafPct = (r.paf * 100).toFixed(1);
+    const ciL = (r.ci_lower * 100).toFixed(1);
+    const ciU = (r.ci_upper * 100).toFixed(1);
+    const barWidth = maxPaf > 0 ? (r.paf / maxPaf * 100) : 0;
+    
+    html += `<tr>
+      <td><b>${r.risk_factor}</b></td>
+      <td style="text-align:center"><span style="font-size:18px;font-weight:700;color:var(--primary)">${pafPct}%</span></td>
+      <td style="text-align:center;font-size:12px;color:#666">${ciL}% - ${ciU}%</td>
+      <td>
+        <div style="background:#f0f0f0;border-radius:4px;height:20px;overflow:hidden">
+          <div style="background:linear-gradient(90deg,var(--primary),var(--primary-light));height:100%;width:${barWidth}%;border-radius:4px;transition:width .5s ease"></div>
+        </div>
+      </td>
+    </tr>`;
+  });
+  
+  html += '</tbody></table>';
+  
+  // Summary stat
+  const topFactor = sorted[0];
+  html += `<div style="margin-top:12px;padding:12px;background:var(--green-light);border-radius:6px;font-size:13px">
+    <b>关键发现：</b>${topFactor.risk_factor} 是最主要的可归因风险因素 (PAF = ${(topFactor.paf*100).toFixed(1)}%)
+  </div>`;
+  
+  return html;
+}
+
+function renderTrendResults(trendResults) {
+  if (!trendResults || !trendResults.apc && trendResults.apc !== 0) return '';
+  
+  const apc = trendResults.apc;
+  const direction = apc > 0 ? '上升' : '下降';
+  const dirIcon = apc > 0 ? '↑' : '↓';
+  const dirColor = apc > 0 ? '#c62828' : '#2e7d32';
+  
+  let html = `
+    <div style="margin-top:20px">
+      <h3 style="margin-bottom:12px;font-size:16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" style="vertical-align:-3px"><polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/></svg>
+        趋势分析
+      </h3>
+      <div class="grid-3" style="gap:12px">
+        <div class="stat-card">
+          <div class="stat-value" style="color:${dirColor}">${dirIcon} ${Math.abs(apc).toFixed(2)}%</div>
+          <div class="stat-label">年均百分比变化 (APC)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${trendResults.p_value !== undefined ? (trendResults.p_value < 0.001 ? '<0.001' : trendResults.p_value.toFixed(3)) : '-'}</div>
+          <div class="stat-label">P 值</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" style="font-size:16px">${direction}</div>
+          <div class="stat-label">趋势方向</div>
+        </div>
+      </div>`;
+  
+  if (trendResults.joinpoints && trendResults.joinpoints.length) {
+    html += `<div style="margin-top:12px;padding:12px;background:#f8f9fa;border-radius:6px;font-size:13px">
+      <b>Joinpoint 转折点：</b> ${trendResults.joinpoints.join(', ')} 年
+    </div>`;
+  }
+  
+  html += '</div>';
+  return html;
+}
+
+function renderChartsSection(charts, pid) {
+  if (!charts || !charts.length) {
+    return `<div class="empty-state">
+      <div class="empty-state-icon">📊</div>
+      <div class="empty-state-text">尚未生成图表</div>
+    </div>`;
+  }
+  
+  const chartTitles = {
+    'paf_bar': { title: 'PAF 风险因素条形图', desc: '展示各风险因素的人群归因分数' },
+    'paf': { title: 'PAF 风险因素条形图', desc: '展示各风险因素的人群归因分数' },
+    'trend': { title: '发病率趋势图', desc: '展示疾病发病率的时间趋势变化' },
+    'pie': { title: '风险因素贡献饼图', desc: '展示各风险因素的相对贡献' }
+  };
+  
+  let html = `<h3 style="margin-bottom:16px;font-size:16px">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" style="vertical-align:-3px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+    生成的图表 (${charts.length})
+  </h3>
+  <div class="chart-grid">`;
+  
+  charts.forEach((c, i) => {
+    const filename = c.file_path ? c.file_path.split('/').pop() : (c.path ? c.path.split('/').pop() : '');
+    const info = chartTitles[c.type] || { title: c.title || '图表 ' + (i+1), desc: '' };
+    const imgSrc = `/api/projects/${pid}/export/download/${filename}`;
+    
+    html += `<div class="chart-card">
+      <img src="${imgSrc}" alt="${info.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" loading="lazy">
+      <div style="display:none;height:200px;align-items:center;justify-content:center;background:#f8f9fa;color:#999">图表加载失败</div>
+      <div class="chart-card-body">
+        <div class="chart-card-title">${info.title}</div>
+        <div class="chart-card-desc">${info.desc}</div>
+      </div>
+    </div>`;
+  });
+  
+  html += '</div>';
+  return html;
+}
+
+function renderPaperPreview(paperData, markdown) {
+  let html = `<h3 style="margin-bottom:16px;font-size:16px">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" style="vertical-align:-3px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+    论文预览
+  </h3>`;
+  
+  if (paperData && paperData.paper) {
+    const paper = paperData.paper;
+    const sections = paper.sections || {};
+    
+    // Paper metadata
+    html += `<div style="margin-bottom:16px;padding:12px 16px;background:#f0f4f8;border-radius:6px;display:flex;gap:24px;flex-wrap:wrap;font-size:13px">
+      <span><b>标题：</b>${paper.title || '-'}</span>
+      <span><b>作者：</b>${(paper.authors || []).join(', ')}</span>
+      <span><b>日期：</b>${paper.date || '-'}</span>
+      <span><b>字数：</b>~${paper.word_count || 0} 词</span>
+      <span class="badge ${paper.status === 'draft' ? 'badge-orange' : 'badge-green'}">${paper.status || 'draft'}</span>
+    </div>`;
+    
+    // Section navigation
+    html += '<div class="paper-section-nav">';
+    const sectionKeys = Object.keys(sections);
+    sectionKeys.forEach((key, i) => {
+      html += `<button class="paper-section-btn ${i === 0 ? 'active' : ''}" onclick="showPaperSection(this, '${key}')">${key.charAt(0).toUpperCase() + key.slice(1)}</button>`;
+    });
+    html += '</div>';
+    
+    // Paper content
+    html += '<div class="paper-preview">';
+    sectionKeys.forEach((key, i) => {
+      const content = sections[key];
+      html += `<div class="paper-section-content" data-section="${key}" style="display:${i === 0 ? 'block' : 'none'}">`;
+      html += `<h2>${key.charAt(0).toUpperCase() + key.slice(1)}</h2>`;
+      
+      if (typeof content === 'object' && content !== null) {
+        // Summary section is a dict
+        Object.entries(content).forEach(([subKey, subVal]) => {
+          html += `<h3>${subKey.charAt(0).toUpperCase() + subKey.slice(1)}</h3><p>${subVal}</p>`;
+        });
+      } else if (typeof content === 'string') {
+        // Other sections are strings with markdown-like formatting
+        const paragraphs = content.split('\n');
+        paragraphs.forEach(line => {
+          const trimmed = line.trim();
+          if (!trimmed) return;
+          if (trimmed.startsWith('## ')) {
+            html += `<h3>${trimmed.slice(3)}</h3>`;
+          } else if (trimmed.startsWith('### ')) {
+            html += `<h3 style="font-size:14px">${trimmed.slice(4)}</h3>`;
+          } else if (trimmed.startsWith('- ')) {
+            html += `<p style="padding-left:16px;position:relative"><span style="position:absolute;left:0;color:var(--primary)">•</span>${trimmed.slice(2)}</p>`;
+          } else if (/^\d+\.\s/.test(trimmed)) {
+            html += `<p style="padding-left:16px">${trimmed}</p>`;
+          } else {
+            html += `<p>${trimmed}</p>`;
+          }
+        });
+      }
+      
+      html += '</div>';
+    });
+    html += '</div>';
+    
+  } else if (markdown) {
+    // Fallback: render markdown content
+    html += '<div class="paper-preview">';
+    const lines = markdown.split('\n');
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return;
+      if (trimmed.startsWith('# ')) {
+        html += `<h2>${trimmed.slice(2)}</h2>`;
+      } else if (trimmed.startsWith('## ')) {
+        html += `<h3>${trimmed.slice(3)}</h3>`;
+      } else if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+        html += `<p><b>${trimmed.slice(2, -2)}</b></p>`;
+      } else if (trimmed.startsWith('- ')) {
+        html += `<p style="padding-left:16px"><span style="position:absolute;left:0;color:var(--primary)">•</span>${trimmed.slice(2)}</p>`;
+      } else if (trimmed === '---') {
+        html += '<hr style="border:none;border-top:1px solid #eee;margin:16px 0">';
+      } else {
+        html += `<p>${trimmed.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')}</p>`;
+      }
+    });
+    html += '</div>';
+  } else {
+    html += `<div class="empty-state">
+      <div class="empty-state-icon">📝</div>
+      <div class="empty-state-text">尚未生成论文</div>
+    </div>`;
+  }
+  
+  return html;
+}
+
+function renderExportSection(pid, step) {
+  let html = `<h3 style="margin-bottom:16px;font-size:16px">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" style="vertical-align:-3px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    导出与下载
+  </h3>`;
+  
+  if (step < 3) {
+    html += `<div class="empty-state" style="padding:20px">
+      <div class="empty-state-text">请先完成分析和可视化步骤后再导出</div>
+    </div>`;
+    return html;
+  }
+  
+  html += `<div class="export-panel">
+    <h4>可用导出选项</h4>
+    <div class="export-btns">`;
+  
+  if (step >= 3) {
+    html += `<button class="btn btn-primary btn-sm" onclick="doExportDetailCharts('${pid}')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+      导出图表 (PNG/SVG)
+    </button>`;
+  }
+  if (step >= 4) {
+    html += `<button class="btn btn-secondary btn-sm" onclick="doExportDetailPaper('${pid}')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      导出论文 (MD/HTML/Word)
+    </button>`;
+    html += `<button class="btn btn-success btn-sm" onclick="doExportDetailPackage('${pid}')">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+      打包下载 (ZIP)
+    </button>`;
+  }
+  
+  html += `</div></div>
+    <div id="detail-export-result" style="margin-top:12px"></div>`;
+  
+  return html;
+}
+
+function showPaperSection(btn, sectionKey) {
+  // Update active button
+  document.querySelectorAll('.paper-section-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  // Show/hide sections
+  document.querySelectorAll('.paper-section-content').forEach(el => {
+    el.style.display = el.dataset.section === sectionKey ? 'block' : 'none';
+  });
+}
+
+// ========== Project Detail Main Function ==========
+async function showProjectDetail(pid) {
+  currentPid = pid;
+  showPage('detail');
+  
+  // Show loading state
+  const loadingHtml = '<div style="text-align:center;padding:40px"><div class="spinner"></div><p style="color:var(--muted2);margin-top:12px">加载中...</p></div>';
+  ['detail-config', 'detail-data', 'detail-analysis', 'detail-charts', 'detail-paper', 'detail-export'].forEach(id => {
+    document.getElementById(id).innerHTML = loadingHtml;
+  });
+  
+  showLoading('加载项目详情...');
+  try {
+    const proj = await cachedFetch(API + '/api/projects/' + pid);
+    
+    const step = STATUS_ORDER[proj.status] || 1;
+    
+    // Title & meta
+    document.getElementById('detail-title').textContent = proj.title;
+    document.getElementById('detail-status-badge').innerHTML = `<span class="badge ${proj.status === 'completed' ? 'badge-green' : proj.status === 'analyzed' ? 'badge-blue' : 'badge-orange'}">${proj.status}</span>`;
+    document.getElementById('detail-meta').textContent = `${proj.cancer_types.join(', ')} · ${proj.countries.length} 个国家 · ${proj.time_range.start_year}-${proj.time_range.end_year}`;
     
     // Steps
-    const statusMap={'created':1,'data_uploaded':2,'analyzed':3,'visualized':4,'completed':5};
-    const step=statusMap[proj.status]||1;
-    document.getElementById('detail-steps').innerHTML=`
-      <div class="step ${step>=1?'done':''} ${step===1?'active':''}"><div class="step-num">1</div><div><b>创建项目</b><br><small>配置研究参数</small></div></div>
-      <div class="step ${step>=2?'done':''} ${step===2?'active':''}"><div class="step-num">2</div><div><b>数据上传</b><br><small>CSV/Excel或示例数据</small></div></div>
-      <div class="step ${step>=3?'done':''} ${step===3?'active':''}"><div class="step-num">3</div><div><b>统计分析</b><br><small>PAF/趋势/Joinpoint</small></div></div>
-      <div class="step ${step>=4?'done':''} ${step===4?'active':''}"><div class="step-num">4</div><div><b>可视化</b><br><small>生成Lancet风格图表</small></div></div>
-      <div class="step ${step>=5?'done':''}"><div class="step-num">5</div><div><b>论文生成</b><br><small>导出Markdown/Word</small></div></div>
-    `;
+    document.getElementById('detail-steps').innerHTML = renderDetailSteps(step);
     
-    // Actions
-    let actions='';
-    if(step<=1) actions=`<button class="btn btn-primary" onclick="loadSampleData('${pid}')">加载示例数据</button>`;
-    if(step===2) actions=`<button class="btn btn-primary" onclick="runAnalysis('${pid}')">运行分析</button>`;
-    if(step===3) actions=`<button class="btn btn-primary" onclick="runVisualize('${pid}')">生成图表</button>`;
-    if(step===4) actions=`<button class="btn btn-primary" onclick="runPaper('${pid}')">生成论文</button>`;
-    if(step>=3) actions+=` <button class="btn btn-secondary" onclick="runAll('${pid}')">一键完成全部</button>`;
-    document.getElementById('detail-actions').innerHTML=actions;
+    // Action buttons
+    document.getElementById('detail-actions').innerHTML = getActionButtons(step, pid);
     
-    // Config
-    document.getElementById('detail-config').innerHTML=`
-      <h3 style="margin-bottom:12px">项目配置</h3>
+    // Config card
+    const riskFactorLabels = {
+      'hepatitis_b': '乙肝 (HBV)', 'hepatitis_c': '丙肝 (HCV)', 'alcohol': '饮酒',
+      'obesity': '肥胖', 'diabetes': '糖尿病', 'smoking': '吸烟', 'hpv': 'HPV',
+      'h_pylori': '幽门螺杆菌', 'air_pollution': '空气污染', 'physical_inactivity': '缺乏运动'
+    };
+    const rfDisplay = proj.risk_factors.map(rf => riskFactorLabels[rf] || rf);
+    
+    document.getElementById('detail-config').innerHTML = `
+      <h3 style="margin-bottom:12px;font-size:16px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" style="vertical-align:-3px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        项目配置
+      </h3>
       <table class="table">
-        <tr><td><b>癌症类型</b></td><td>${proj.cancer_types.join(', ')}</td></tr>
-        <tr><td><b>国家/地区</b></td><td>${proj.countries.join(', ')}</td></tr>
+        <tr><td style="width:120px"><b>癌症类型</b></td><td>${proj.cancer_types.map(c => '<span class="badge badge-blue" style="margin-right:4px">' + c + '</span>').join('')}</td></tr>
+        <tr><td><b>国家/地区</b></td><td>${proj.countries.slice(0, 5).join(', ')}${proj.countries.length > 5 ? ' 等' + proj.countries.length + '个' : ''}</td></tr>
         <tr><td><b>时间范围</b></td><td>${proj.time_range.start_year} - ${proj.time_range.end_year}</td></tr>
-        <tr><td><b>风险因素</b></td><td>${proj.risk_factors.join(', ')}</td></tr>
-        <tr><td><b>数据源</b></td><td>${proj.data_source}</td></tr>
-        <tr><td><b>状态</b></td><td><span class="badge badge-blue">${proj.status}</span></td></tr>
-      </table>
-    `;
+        <tr><td><b>风险因素</b></td><td>${rfDisplay.join(', ')}</td></tr>
+        <tr><td><b>数据源</b></td><td><span class="badge badge-blue">${proj.data_source}</span></td></tr>
+        <tr><td><b>创建时间</b></td><td>${proj.created_at ? new Date(proj.created_at).toLocaleString('zh-CN') : '-'}</td></tr>
+      </table>`;
     
-    // Data
-    try{
-      const dRes=await fetch(API+'/api/projects/'+pid+'/data');
-      const dData=await dRes.json();
-      if(dData.summary){
-        document.getElementById('detail-data').innerHTML=`
-          <h3 style="margin-bottom:12px">数据摘要</h3>
-          <table class="table">
-            <tr><td><b>记录数</b></td><td>${dData.summary.total_records}</td></tr>
-            <tr><td><b>国家数</b></td><td>${dData.summary.n_countries||'-'}</td></tr>
-            <tr><td><b>年份范围</b></td><td>${dData.summary.year_range?dData.summary.year_range.min+'-'+dData.summary.year_range.max:'-'}</td></tr>
-            <tr><td><b>癌症类型</b></td><td>${dData.summary.cancer_types?dData.summary.cancer_types.join(', '):'-'}</td></tr>
-          </table>
-        `;
-      }else{
-        document.getElementById('detail-data').innerHTML='<h3>数据</h3><p style="color:#999">尚未上传数据</p>';
+    // Data summary
+    try {
+      const dData = await cachedFetch(API + '/api/projects/' + pid + '/data');
+      if (dData.summary) {
+        const s = dData.summary;
+        document.getElementById('detail-data').innerHTML = `
+          <h3 style="margin-bottom:12px;font-size:16px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="2" style="vertical-align:-3px"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            数据摘要
+          </h3>
+          <div class="grid-2" style="gap:12px">
+            <div class="stat-card">
+              <div class="stat-value">${(s.total_records || 0).toLocaleString()}</div>
+              <div class="stat-label">数据记录数</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">${s.n_countries || '-'}</div>
+              <div class="stat-label">国家/地区数</div>
+            </div>
+          </div>
+          <table class="table" style="margin-top:12px">
+            <tr><td style="width:120px"><b>年份范围</b></td><td>${s.year_range ? s.year_range.min + ' - ' + s.year_range.max : '-'}</td></tr>
+            <tr><td><b>癌症类型</b></td><td>${s.cancer_types ? s.cancer_types.join(', ') : '-'}</td></tr>
+            <tr><td><b>数据文件</b></td><td>${dData.filename || '-'}</td></tr>
+          </table>`;
+      } else {
+        document.getElementById('detail-data').innerHTML = `
+          <h3 style="margin-bottom:12px;font-size:16px">数据摘要</h3>
+          <div class="empty-state" style="padding:20px">
+            <div class="empty-state-icon" style="font-size:32px">📁</div>
+            <div class="empty-state-text">尚未上传数据</div>
+          </div>`;
       }
-    }catch(e){}
+    } catch (e) {
+      document.getElementById('detail-data').innerHTML = '<h3>数据</h3><p style="color:var(--muted3)">加载数据摘要失败</p>';
+    }
     
-  }catch(e){toast('加载项目失败','error');}
+    // Analysis results (PAF + Trend)
+    if (step >= 3) {
+      try {
+        const aData = await cachedFetch(API + '/api/projects/' + pid + '/analysis');
+        
+        if (aData.paf_results) {
+          let analysisHtml = renderPAFTable(aData.paf_results);
+          analysisHtml += renderTrendResults(aData.trend_results || {});
+          document.getElementById('detail-analysis').innerHTML = analysisHtml;
+        } else {
+          document.getElementById('detail-analysis').innerHTML = `
+            <h3 style="margin-bottom:12px;font-size:16px">分析结果</h3>
+            <div class="empty-state" style="padding:20px">
+              <div class="empty-state-text">暂无分析结果</div>
+            </div>`;
+        }
+      } catch (e) {
+        document.getElementById('detail-analysis').innerHTML = '<h3>分析结果</h3><p style="color:var(--muted3)">加载分析结果失败</p>';
+      }
+    } else {
+      document.getElementById('detail-analysis').innerHTML = `
+        <h3 style="margin-bottom:12px;font-size:16px">分析结果</h3>
+        <div class="empty-state" style="padding:20px">
+          <div class="empty-state-icon" style="font-size:32px">🔬</div>
+          <div class="empty-state-text">请先运行统计分析</div>
+        </div>`;
+    }
+    
+    // Charts
+    if (step >= 4) {
+      try {
+        const eData = await cachedFetch(API + '/api/projects/' + pid + '/export/summary');
+        
+        if (eData.charts && eData.charts.length > 0) {
+          const chartTypes = eData.charts.map((f, i) => {
+            const name = f.filename.toLowerCase();
+            let type = 'chart';
+            if (name.includes('_paf')) type = 'paf_bar';
+            else if (name.includes('_trend')) type = 'trend';
+            else if (name.includes('_pie') || name.includes('_risk')) type = 'pie';
+            return { type, file_path: f.filename };
+          });
+          document.getElementById('detail-charts').innerHTML = renderChartsSection(chartTypes, pid);
+        } else {
+          document.getElementById('detail-charts').innerHTML = `
+            <h3 style="margin-bottom:12px;font-size:16px">图表</h3>
+            <div class="empty-state" style="padding:20px">
+              <div class="empty-state-icon" style="font-size:32px">📊</div>
+              <div class="empty-state-text">尚未生成图表，请先运行可视化步骤</div>
+            </div>`;
+        }
+      } catch (e) {
+        document.getElementById('detail-charts').innerHTML = '<h3>图表</h3><p style="color:var(--muted3)">加载图表失败</p>';
+      }
+    } else {
+      document.getElementById('detail-charts').innerHTML = `
+        <h3 style="margin-bottom:12px;font-size:16px">图表</h3>
+        <div class="empty-state" style="padding:20px">
+          <div class="empty-state-icon" style="font-size:32px">📊</div>
+          <div class="empty-state-text">请先运行分析和可视化步骤</div>
+        </div>`;
+    }
+    
+    // Paper preview
+    if (step >= 5) {
+      try {
+        const pData = await cachedFetch(API + '/api/projects/' + pid + '/paper');
+        
+        if (pData.has_paper) {
+          document.getElementById('detail-paper').innerHTML = renderPaperPreview(pData, pData.markdown);
+        } else {
+          document.getElementById('detail-paper').innerHTML = `
+            <h3 style="margin-bottom:12px;font-size:16px">论文预览</h3>
+            <div class="empty-state" style="padding:20px">
+              <div class="empty-state-icon" style="font-size:32px">📝</div>
+              <div class="empty-state-text">论文尚未生成</div>
+            </div>`;
+        }
+      } catch (e) {
+        document.getElementById('detail-paper').innerHTML = '<h3>论文</h3><p style="color:var(--muted3)">加载论文失败</p>';
+      }
+    } else {
+      document.getElementById('detail-paper').innerHTML = `
+        <h3 style="margin-bottom:12px;font-size:16px">论文预览</h3>
+        <div class="empty-state" style="padding:20px">
+          <div class="empty-state-icon" style="font-size:32px">📝</div>
+          <div class="empty-state-text">完成所有步骤后可生成论文</div>
+        </div>`;
+    }
+    
+    // Export section
+    document.getElementById('detail-export').innerHTML = renderExportSection(pid, step);
+    
+  } catch (e) {
+    showGlobalError('加载项目失败: ' + e.message);
+    toast('加载项目失败: ' + e.message, 'error');
+    document.getElementById('detail-title').textContent = '加载失败';
+    document.getElementById('detail-steps').innerHTML = '';
+    document.getElementById('detail-config').innerHTML = `<div class="empty-state"><div class="empty-state-icon">❌</div><div class="empty-state-text">${e.message}</div></div>`;
+  } finally {
+    hideLoading();
+  }
+}
+
+// Export functions for detail page
+async function doExportDetailCharts(pid) {
+  toast('正在导出图表...');
+  showLoading('导出图表...');
+  try {
+    const r = await cachedFetch(API + '/api/projects/' + pid + '/export/charts?format=png', { method: 'POST' });
+    const el = document.getElementById('detail-export-result');
+    if (el) el.innerHTML = `<div class="result-box"><b>✓ ${r.message}</b><ul style="margin:8px 0 0;padding-left:20px">${(r.exported_files || []).map(f => '<li>' + f.split('/').pop() + '</li>').join('')}</ul></div>`;
+    toast('图表导出成功');
+  } catch (e) { showGlobalError('导出失败: ' + e.message); toast('导出失败: ' + e.message, 'error'); }
+  finally { hideLoading(); }
+}
+
+async function doExportDetailPaper(pid) {
+  toast('正在导出论文...');
+  showLoading('导出论文...');
+  try {
+    const r = await cachedFetch(API + '/api/projects/' + pid + '/export/paper?format=all', { method: 'POST' });
+    const el = document.getElementById('detail-export-result');
+    if (el) el.innerHTML = `<div class="result-box"><b>✓ ${r.message}</b><ul style="margin:8px 0 0;padding-left:20px">${(r.exported_files || []).map(f => '<li>' + f.split('/').pop() + '</li>').join('')}</ul></div>`;
+    toast('论文导出成功');
+  } catch (e) { showGlobalError('导出失败: ' + e.message); toast('导出失败: ' + e.message, 'error'); }
+  finally { hideLoading(); }
+}
+
+async function doExportDetailPackage(pid) {
+  toast('正在打包...');
+  showLoading('打包下载...');
+  try {
+    await cachedFetch(API + '/api/projects/' + pid + '/export/charts?format=png', { method: 'POST' });
+    await cachedFetch(API + '/api/projects/' + pid + '/export/paper?format=all', { method: 'POST' });
+    const r = await cachedFetch(API + '/api/projects/' + pid + '/export/package', { method: 'POST' });
+    const el = document.getElementById('detail-export-result');
+    if (el) el.innerHTML = `<div class="result-box"><b>✓ ${r.message}</b><p style="margin-top:4px;font-size:13px">图表: ${r.files_count.charts} | 论文: ${r.files_count.papers}</p></div>`;
+    toast('打包完成');
+  } catch (e) { showGlobalError('打包失败: ' + e.message); toast('打包失败: ' + e.message, 'error'); }
+  finally { hideLoading(); }
 }
 
 async function loadSampleData(pid){
   try{
-    await fetch(API+'/api/sample/load/'+pid,{method:'POST'});
+    showLoading('加载示例数据...');
+    await cachedFetch(API+'/api/sample/load/'+pid,{method:'POST'});
+    clearCache('/api/projects');
     toast('示例数据加载成功');
     showProjectDetail(pid);
-  }catch(e){toast('加载失败','error');}
+  }catch(e){showGlobalError('加载失败: '+e.message);toast('加载失败','error');}
+  finally{hideLoading();}
 }
 
 async function runAnalysis(pid){
   toast('正在运行分析...');
+  showLoading('运行统计分析...');
   try{
-    await fetch(API+'/api/projects/'+pid+'/analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_id:pid,analysis_type:'PAF'})});
+    await cachedFetch(API+'/api/projects/'+pid+'/analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_id:pid,analysis_type:'PAF'})});
+    clearCache('/api/projects/'+pid);
     toast('分析完成');
     showProjectDetail(pid);
-  }catch(e){toast('分析失败','error');}
+  }catch(e){showGlobalError('分析失败: '+e.message);toast('分析失败','error');}
+  finally{hideLoading();}
 }
 
 async function runVisualize(pid){
   toast('正在生成图表...');
+  showLoading('生成可视化图表...');
   try{
-    await fetch(API+'/api/projects/'+pid+'/visualize',{method:'POST'});
+    await cachedFetch(API+'/api/projects/'+pid+'/visualize',{method:'POST'});
+    clearCache('/api/projects/'+pid);
     toast('图表生成完成');
     showProjectDetail(pid);
-  }catch(e){toast('图表生成失败','error');}
+  }catch(e){showGlobalError('图表生成失败: '+e.message);toast('图表生成失败','error');}
+  finally{hideLoading();}
 }
 
 async function runPaper(pid){
   toast('正在生成论文...');
+  showLoading('生成论文草稿...');
   try{
-    await fetch(API+'/api/projects/'+pid+'/paper',{method:'POST'});
+    await cachedFetch(API+'/api/projects/'+pid+'/paper',{method:'POST'});
+    clearCache('/api/projects/'+pid);
     toast('论文生成完成');
     showProjectDetail(pid);
-  }catch(e){toast('论文生成失败','error');}
+  }catch(e){showGlobalError('论文生成失败: '+e.message);toast('论文生成失败','error');}
+  finally{hideLoading();}
 }
 
 async function runAll(pid){
   toast('正在执行完整流程...');
+  showLoading('执行完整分析流程...');
   try{
-    await fetch(API+'/api/projects/'+pid+'/analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_id:pid,analysis_type:'PAF'})});
-    await fetch(API+'/api/projects/'+pid+'/visualize',{method:'POST'});
-    await fetch(API+'/api/projects/'+pid+'/paper',{method:'POST'});
+    await cachedFetch(API+'/api/projects/'+pid+'/analysis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_id:pid,analysis_type:'PAF'})});
+    await cachedFetch(API+'/api/projects/'+pid+'/visualize',{method:'POST'});
+    await cachedFetch(API+'/api/projects/'+pid+'/paper',{method:'POST'});
+    clearCache('/api/projects/'+pid);
     toast('全部完成！');
     showProjectDetail(pid);
-  }catch(e){toast('执行失败','error');}
+  }catch(e){showGlobalError('执行失败: '+e.message);toast('执行失败','error');}
+  finally{hideLoading();}
 }
 
 // ========== PAF Calculator ==========
 async function calcPAF(){
   const exp=parseFloat(document.getElementById('calc-exp').value);
   const rr=parseFloat(document.getElementById('calc-rr').value);
+  const btn = document.querySelector('#page-calculator .btn-primary');
   try{
-    const res=await fetch(API+'/api/analysis/paf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exposure_rate:exp,relative_risk:rr})});
-    const r=await res.json();
+    setBtnLoading(btn, true);
+    const r = await cachedFetch(API+'/api/analysis/paf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({exposure_rate:exp,relative_risk:rr})});
     document.getElementById('calc-result').style.display='block';
     document.getElementById('calc-value').textContent=(r.paf*100).toFixed(1)+'%';
     document.getElementById('calc-interp').textContent=`在暴露率 ${(exp*100).toFixed(1)}% 的人群中，该因素导致 ${(r.paf*100).toFixed(1)}% 的疾病负担`;
@@ -531,19 +1750,19 @@ async function calcPAF(){
       <p><b>暴露率:</b> ${(r.exposure_rate*100).toFixed(1)}%</p>
       <p><b>相对风险:</b> ${r.relative_risk.toFixed(2)}</p>
     `;
-  }catch(e){toast('计算失败','error');}
+  }catch(e){showGlobalError('计算失败: '+e.message);toast('计算失败','error');}
+  finally{setBtnLoading(btn, false);}
 }
 
 // ========== Export ==========
 async function loadExportProjects(){
   try{
-    const res=await fetch(API+'/api/projects');
-    const data=await res.json();
+    const data = await cachedFetch(API+'/api/projects');
     projects=data.projects||[];
     const el=document.getElementById('export-project-select');
-    if(!projects.length){el.innerHTML='<p style="color:#999">暂无项目，请先创建项目</p>';return;}
+    if(!projects.length){el.innerHTML='<p style="color:var(--muted3)">暂无项目，请先创建项目</p>';return;}
     el.innerHTML='<select id="export-pid" class="input" onchange="selectExportProject()">'+projects.map(p=>`<option value="${p.id}">${p.title} (${p.status})</option>`).join('')+'</select>';
-  }catch(e){}
+  }catch(e){showGlobalError('加载导出项目失败: '+e.message);}
 }
 
 function selectExportProject(){
@@ -553,32 +1772,37 @@ function selectExportProject(){
 
 async function doExportCharts(){
   if(!currentPid){toast('请先选择项目','error');return;}
+  showLoading('导出图表...');
   try{
-    const res=await fetch(API+'/api/projects/'+currentPid+'/export/charts?format=png',{method:'POST'});
-    const r=await res.json();
+    const r = await cachedFetch(API+'/api/projects/'+currentPid+'/export/charts?format=png',{method:'POST'});
     document.getElementById('export-result').innerHTML=`<div class="result-box"><b>✓ ${r.message}</b><ul>${r.exported_files.map(f=>'<li>'+f.split('/').pop()+'</li>').join('')}</ul></div>`;
-  }catch(e){toast('导出失败','error');}
+    toast('图表导出成功');
+  }catch(e){showGlobalError('导出失败: '+e.message);toast('导出失败','error');}
+  finally{hideLoading();}
 }
 
 async function doExportPaper(){
   if(!currentPid){toast('请先选择项目','error');return;}
+  showLoading('导出论文...');
   try{
-    const res=await fetch(API+'/api/projects/'+currentPid+'/export/paper?format=all',{method:'POST'});
-    const r=await res.json();
+    const r = await cachedFetch(API+'/api/projects/'+currentPid+'/export/paper?format=all',{method:'POST'});
     document.getElementById('export-result').innerHTML=`<div class="result-box"><b>✓ ${r.message}</b><ul>${r.exported_files.map(f=>'<li>'+f.split('/').pop()+'</li>').join('')}</ul></div>`;
-  }catch(e){toast('导出失败','error');}
+    toast('论文导出成功');
+  }catch(e){showGlobalError('导出失败: '+e.message);toast('导出失败','error');}
+  finally{hideLoading();}
 }
 
 async function doExportPackage(){
   if(!currentPid){toast('请先选择项目','error');return;}
+  showLoading('打包下载...');
   try{
-    await fetch(API+'/api/projects/'+currentPid+'/export/charts?format=png',{method:'POST'});
-    await fetch(API+'/api/projects/'+currentPid+'/export/paper?format=all',{method:'POST'});
-    const res=await fetch(API+'/api/projects/'+currentPid+'/export/package',{method:'POST'});
-    const r=await res.json();
-    document.getElementById('export-result').innerHTML=`<div class="result-box"><b>✓ ${r.message}</b><p>图表: ${r.files_count.charts} | 论文: ${r.files_count.papers}</p><p style="font-size:12px;color:#666">文件: ${r.zip_path}</p></div>`;
+    await cachedFetch(API+'/api/projects/'+currentPid+'/export/charts?format=png',{method:'POST'});
+    await cachedFetch(API+'/api/projects/'+currentPid+'/export/paper?format=all',{method:'POST'});
+    const r = await cachedFetch(API+'/api/projects/'+currentPid+'/export/package',{method:'POST'});
+    document.getElementById('export-result').innerHTML=`<div class="result-box"><b>✓ ${r.message}</b><p>图表: ${r.files_count.charts} | 论文: ${r.files_count.papers}</p><p style="font-size:12px;color:var(--muted)">文件: ${r.zip_path}</p></div>`;
     toast('下载包创建成功');
-  }catch(e){toast('打包失败','error');}
+  }catch(e){showGlobalError('打包失败: '+e.message);toast('打包失败','error');}
+  finally{hideLoading();}
 }
 
 // ========== Full Demo ==========
@@ -597,10 +1821,10 @@ async function runFullDemo(){
     stepsEl.innerHTML=html;
   }
   
+  showLoading('运行完整演示...');
   try{
     setStep(1,'执行中...','');await new Promise(r=>setTimeout(r,500));
-    const res=await fetch(API+'/api/demo/run',{method:'POST'});
-    const result=await res.json();
+    const result = await cachedFetch(API+'/api/demo/run',{method:'POST'});
     currentPid=result.project_id;
     
     setStep(2,'完成','done');await new Promise(r=>setTimeout(r,300));
@@ -629,16 +1853,287 @@ async function runFullDemo(){
         </div>
       </div>
     `;
+    clearCache('/api/');
     toast('演示完成！');
   }catch(e){
     setStep(0,'失败','error');
     outputEl.innerHTML=`<div class="result-box" style="border-color:#c62828"><b>演示失败:</b> ${e.message}</div>`;
+    showGlobalError('演示失败: '+e.message);
     toast('演示失败','error');
+  }finally{hideLoading();}
+}
+
+// ========== Keyboard Shortcuts ==========
+document.addEventListener('keydown', function(e) {
+  // Don't trigger shortcuts when typing in inputs
+  const tag = e.target.tagName;
+  const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+  
+  // Ctrl+Enter: Run analysis or action based on current page
+  if (e.ctrlKey && e.key === 'Enter') {
+    e.preventDefault();
+    if (currentPid && document.getElementById('page-detail').classList.contains('active')) {
+      const step = STATUS_ORDER[projects.find(p => p.id === currentPid)?.status] || 1;
+      if (step === 2) runAnalysis(currentPid);
+      else if (step === 3) runVisualize(currentPid);
+      else if (step === 4) runPaper(currentPid);
+      else if (step >= 2) runAll(currentPid);
+    } else if (document.getElementById('page-calculator').classList.contains('active')) {
+      calcPAF();
+    } else if (document.getElementById('page-wizard').classList.contains('active')) {
+      createProject();
+    }
+    return;
+  }
+  
+  // Ctrl+D: Toggle dark mode
+  if (e.ctrlKey && e.key === 'd') {
+    e.preventDefault();
+    toggleDarkMode();
+    return;
+  }
+  
+  // Escape: Close overlays and menus
+  if (e.key === 'Escape') {
+    document.getElementById('tourOverlay').classList.remove('active');
+    document.getElementById('navLinks').classList.remove('mobile-open');
+    document.getElementById('globalError').classList.remove('active');
+    document.getElementById('loadingOverlay').classList.remove('active');
+    document.getElementById('kbdHint').classList.remove('show');
+    return;
+  }
+  
+  // ? key (when not in input): Show keyboard shortcuts
+  if (e.key === '?' && !isInput) {
+    e.preventDefault();
+    document.getElementById('kbdHint').classList.toggle('show');
+    return;
+  }
+});
+
+// ========== Plotly Interactive Home Chart ==========
+function initHomePlotlyChart() {
+  const el = document.getElementById('homePlotlyChart');
+  if (!el || typeof Plotly === 'undefined') return;
+
+  const isDark = document.body.classList.contains('dark');
+  const textColor = isDark ? '#e0e0e0' : '#333';
+  const gridColor = isDark ? '#2a2a4a' : '#f0ebe5';
+  const bgColor = isDark ? '#16213e' : '#fefcf9';
+
+  // Sample data: top 10 cancers by ASR (GLOBOCAN 2022 style)
+  const cancers = ['Lung', 'Breast', 'Colorectal', 'Prostate', 'Stomach', 'Liver', 'Thyroid', 'Bladder', 'Kidney', 'Oesophagus'];
+  const incidence = [24.7, 23.4, 19.5, 14.1, 12.4, 9.6, 9.2, 5.8, 4.7, 4.5];
+  const mortality = [18.6, 6.7, 9.0, 3.1, 8.3, 8.2, 0.7, 2.1, 1.9, 3.8];
+
+  const trace1 = {
+    x: cancers, y: incidence, name: 'Incidence ASR', type: 'bar',
+    marker: { color: '#A51C30', opacity: 0.9, line: { color: '#8B1525', width: 1 } },
+    hovertemplate: '<b>%{x}</b><br>Incidence ASR: %{y:.1f} per 100,000<extra></extra>'
+  };
+  const trace2 = {
+    x: cancers, y: mortality, name: 'Mortality ASR', type: 'bar',
+    marker: { color: '#2166AC', opacity: 0.85, line: { color: '#1a4f85', width: 1 } },
+    hovertemplate: '<b>%{x}</b><br>Mortality ASR: %{y:.1f} per 100,000<extra></extra>'
+  };
+
+  const layout = {
+    title: { text: 'Top 10 Cancers by Age-Standardized Rate (World)', font: { family: 'Helvetica Neue, Arial, sans-serif', size: 16, color: textColor } },
+    xaxis: { title: { text: 'Cancer Site', font: { size: 12, color: isDark ? '#aab' : '#666' } }, tickangle: -30, tickfont: { size: 11, color: isDark ? '#aab' : '#666' } },
+    yaxis: { title: { text: 'ASR (per 100,000)', font: { size: 12, color: isDark ? '#aab' : '#666' } }, gridcolor: gridColor, zeroline: false, tickfont: { color: isDark ? '#aab' : '#666' } },
+    barmode: 'group',
+    legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center', font: { size: 12, color: textColor } },
+    plot_bgcolor: bgColor, paper_bgcolor: 'transparent',
+    margin: { t: 60, b: 80, l: 60, r: 30 },
+    font: { family: 'Helvetica Neue, Arial, sans-serif', color: textColor },
+    hoverlabel: { bgcolor: isDark ? '#1e2a4a' : '#fff', bordercolor: '#A51C30', font: { size: 13, color: textColor, family: 'Helvetica Neue, Arial, sans-serif' } }
+  };
+
+  Plotly.newPlot(el, [trace1, trace2], layout, { responsive: true, displayModeBar: true, modeBarButtonsToRemove: ['lasso2d', 'select2d'], displaylogo: false, toImageButtonOptions: { format: 'png', filename: 'cancer_burden_overview', width: 1200, height: 600, scale: 2 } });
+}
+
+// Refresh Plotly chart when dark mode changes
+const _origToggle = toggleDarkMode;
+toggleDarkMode = function() {
+  _origToggle();
+  setTimeout(initHomePlotlyChart, 350);
+};
+
+// ========== Database Page Tab Navigation ==========
+function showDbTab(tabId, btnEl) {
+  document.querySelectorAll('.db-tab-content').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.db-nav-btn').forEach(b => b.classList.remove('active'));
+  const target = document.getElementById('db-tab-' + tabId);
+  if (target) target.style.display = 'block';
+  if (btnEl) btnEl.classList.add('active');
+}
+
+// ========== Onboarding Tour ==========
+const TOUR_STEPS = [
+  {
+    title: '欢迎使用 Cancer Research Platform',
+    desc: '这是一个 AI 驱动的肿瘤学数据分析平台，帮助您从全球癌症数据出发，快速生成符合 <i>The Lancet</i> 标准的研究论文。接下来让我们了解平台的核心功能。'
+  },
+  {
+    title: '数据库概览',
+    desc: '点击导航栏的 <b>「数据库」</b>，可以查看 GLOBOCAN、GBD、CI5 三大权威数据库的详细介绍、核心指标和代表性论文。这些是您研究的数据基础。'
+  },
+  {
+    title: '创建研究项目',
+    desc: '点击 <b>「新建项目」</b>，选择癌症类型、目标国家/地区、时间范围和风险因素，系统会自动配置研究参数并加载示例数据。'
+  },
+  {
+    title: '统计分析',
+    desc: '平台支持 <b>PAF (人群归因分数)</b>、<b>Joinpoint 回归</b>、<b>ASR (年龄标准化率)</b> 等分析方法。也可以使用 <b>「PAF 计算器」</b> 快速计算。'
+  },
+  {
+    title: '可视化与论文生成',
+    desc: '分析完成后，平台会生成 <b>Lancet 风格的图表</b>和<b>交互式 Plotly 图表</b>，并自动生成符合 Lancet 格式要求的论文草稿，支持 Markdown/HTML/Word 导出。'
+  },
+  {
+    title: '开始使用',
+    desc: '您可以点击首页的 <b>「▶ 一键运行演示」</b> 快速体验完整流程，或者直接 <b>「创建新项目」</b> 开始您自己的研究。祝您研究顺利！ 🎓'
+  }
+];
+
+let tourCurrentStep = 0;
+
+function checkAndShowTour() {
+  if (!localStorage.getItem('cancer_platform_tour_done')) {
+    setTimeout(startTour, 800);
   }
 }
 
+function startTour() {
+  tourCurrentStep = 0;
+  renderTourStep();
+  document.getElementById('tourOverlay').classList.add('active');
+}
+
+function endTour() {
+  document.getElementById('tourOverlay').classList.remove('active');
+  localStorage.setItem('cancer_platform_tour_done', '1');
+}
+
+function tourNext() {
+  if (tourCurrentStep < TOUR_STEPS.length - 1) {
+    tourCurrentStep++;
+    renderTourStep();
+  } else {
+    endTour();
+  }
+}
+
+function tourPrev() {
+  if (tourCurrentStep > 0) {
+    tourCurrentStep--;
+    renderTourStep();
+  }
+}
+
+function renderTourStep() {
+  const step = TOUR_STEPS[tourCurrentStep];
+  const content = document.getElementById('tourStepContent');
+  content.innerHTML = `
+    <div class="tour-step-num">${tourCurrentStep + 1}</div>
+    <div class="tour-step-title">${step.title}</div>
+    <div class="tour-step-desc">${step.desc}</div>
+  `;
+
+  // Indicator dots
+  const indicator = document.getElementById('tourIndicator');
+  indicator.innerHTML = TOUR_STEPS.map((_, i) =>
+    `<div class="tour-dot ${i === tourCurrentStep ? 'active' : ''}"></div>`
+  ).join('');
+
+  // Button states
+  document.getElementById('tourPrevBtn').style.display = tourCurrentStep === 0 ? 'none' : 'inline-block';
+  const nextBtn = document.getElementById('tourNextBtn');
+  nextBtn.textContent = tourCurrentStep === TOUR_STEPS.length - 1 ? '开始使用 🚀' : '下一步';
+}
+
+// ========== Plotly Chart Builder for Project Detail ==========
+function createPlotlyPAFChart(containerId, pafResults) {
+  if (!pafResults || !pafResults.length || typeof Plotly === 'undefined') return;
+
+  const sorted = [...pafResults].sort((a, b) => b.paf - a.paf);
+  const trace = {
+    y: sorted.map(r => r.risk_factor),
+    x: sorted.map(r => r.paf * 100),
+    type: 'bar',
+    orientation: 'h',
+    marker: {
+      color: sorted.map((_, i) => {
+        const colors = ['#A51C30', '#C2453E', '#D6604D', '#E8886A', '#F0A08A', '#F5B8A8'];
+        return colors[i % colors.length];
+      }),
+      line: { color: '#8B1525', width: 0.5 }
+    },
+    text: sorted.map(r => (r.paf * 100).toFixed(1) + '%'),
+    textposition: 'outside',
+    textfont: { size: 11, color: '#333', family: 'Helvetica Neue, Arial' },
+    hovertemplate: '<b>%{y}</b><br>PAF: %{x:.1f}%<br>95% CI: %{customdata[0]}% - %{customdata[1]}%<extra></extra>',
+    customdata: sorted.map(r => [(r.ci_lower * 100).toFixed(1), (r.ci_upper * 100).toFixed(1)])
+  };
+
+  const layout = {
+    title: { text: 'Population Attributable Fraction by Risk Factor', font: { size: 15, color: '#333' } },
+    xaxis: { title: { text: 'PAF (%)', font: { size: 12 } }, gridcolor: '#f0ebe5', zeroline: false },
+    yaxis: { automargin: true, tickfont: { size: 12 } },
+    plot_bgcolor: '#fefcf9',
+    paper_bgcolor: 'transparent',
+    margin: { t: 50, b: 50, l: 120, r: 80 },
+    height: 350,
+    hoverlabel: { bgcolor: '#fff', bordercolor: '#A51C30', font: { size: 12 } }
+  };
+
+  Plotly.newPlot(containerId, [trace], layout, { responsive: true, displayModeBar: true, displaylogo: false });
+}
+
+function createPlotlyTrendChart(containerId, years, values, ciLower, ciUpper, title) {
+  if (!years || !values || typeof Plotly === 'undefined') return;
+
+  const mainTrace = {
+    x: years, y: values,
+    type: 'scatter', mode: 'lines+markers',
+    name: 'ASR',
+    line: { color: '#A51C30', width: 2.5 },
+    marker: { size: 5, color: '#A51C30' },
+    hovertemplate: '<b>Year %{x}</b><br>ASR: %{y:.1f}<extra></extra>'
+  };
+
+  const ciTrace = {
+    x: [...years, ...years.slice().reverse()],
+    y: [...ciUpper, ...ciLower.slice().reverse()],
+    fill: 'toself',
+    fillcolor: 'rgba(165,28,48,0.12)',
+    line: { color: 'transparent' },
+    type: 'scatter',
+    name: '95% CI',
+    hoverinfo: 'skip',
+    showlegend: true
+  };
+
+  const layout = {
+    title: { text: title || 'Incidence Trend', font: { size: 15, color: '#333' } },
+    xaxis: { title: { text: 'Year', font: { size: 12 } }, gridcolor: '#f0ebe5' },
+    yaxis: { title: { text: 'ASR (per 100,000)', font: { size: 12 } }, gridcolor: '#f0ebe5', zeroline: false },
+    legend: { orientation: 'h', y: 1.12, x: 0.5, xanchor: 'center' },
+    plot_bgcolor: '#fefcf9',
+    paper_bgcolor: 'transparent',
+    margin: { t: 60, b: 50, l: 60, r: 30 },
+    height: 350,
+    hoverlabel: { bgcolor: '#fff', bordercolor: '#A51C30', font: { size: 12 } }
+  };
+
+  Plotly.newPlot(containerId, [ciTrace, mainTrace], layout, { responsive: true, displayModeBar: true, displaylogo: false });
+}
+
 // Init
+initDarkMode();
 loadProjects();
+initHomePlotlyChart();
+checkAndShowTour();
 </script>
 </body>
 </html>
