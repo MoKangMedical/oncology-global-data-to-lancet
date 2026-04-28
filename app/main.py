@@ -95,6 +95,69 @@ class TrendRequest(BaseModel):
     values: List[float]
 
 
+class KaplanMeierRequest(BaseModel):
+    times: List[float]
+    events: List[int]
+    confidence_level: float = 0.95
+
+
+class CoxRegressionRequest(BaseModel):
+    times: List[float]
+    events: List[int]
+    covariates: Dict[str, List[float]]
+    confidence_level: float = 0.95
+
+
+class MetaAnalysisRequest(BaseModel):
+    effects: List[float]
+    variances: List[float]
+    study_names: Optional[List[str]] = None
+    method: str = "both"  # "fixed", "random", "both"
+    confidence_level: float = 0.95
+
+
+class SensitivityAnalysisRequest(BaseModel):
+    effects: List[float]
+    variances: List[float]
+    study_names: Optional[List[str]] = None
+    model: str = "random"  # "fixed" or "random"
+    confidence_level: float = 0.95
+
+
+class ForestPlotRequest(BaseModel):
+    studies: List[Dict[str, Any]]
+    pooled_effect: Optional[float] = None
+    pooled_ci_lower: Optional[float] = None
+    pooled_ci_upper: Optional[float] = None
+    title: str = "Forest Plot"
+    xlabel: str = "Effect Size"
+    xlog: bool = False
+
+
+class FunnelPlotRequest(BaseModel):
+    effects: List[float]
+    variances: List[float]
+    study_names: Optional[List[str]] = None
+    pooled_effect: Optional[float] = None
+    title: str = "Funnel Plot"
+
+
+class SurvivalCurveRequest(BaseModel):
+    times: List[float]
+    events: List[int]
+    title: str = "Kaplan-Meier Survival Curve"
+    confidence_level: float = 0.95
+    groups: Optional[List[Dict[str, Any]]] = None
+
+
+class HeatmapRequest(BaseModel):
+    data: List[List[float]]
+    row_labels: List[str]
+    col_labels: List[str]
+    title: str = "Heatmap"
+    cmap: str = "YlOrRd"
+
+
 # ========== API 路由 ==========
 
 @app.get("/", response_class=HTMLResponse)
@@ -960,9 +1023,306 @@ async def get_statistical_methods():
                 "full_name": "Annual Percentage Change",
                 "description": "年度百分比变化 - 衡量时间趋势",
                 "formula": "APC = (exp(b) - 1) × 100"
+            },
+            {
+                "name": "Kaplan-Meier",
+                "full_name": "Kaplan-Meier Survival Estimator",
+                "description": "Kaplan-Meier 生存分析 - 非参数生存函数估计",
+                "formula": "S(t) = ∏(1 - d_i/n_i)"
+            },
+            {
+                "name": "Cox Regression",
+                "full_name": "Cox Proportional Hazards Model",
+                "description": "Cox比例风险回归 - 多因素生存分析",
+                "formula": "h(t|X) = h0(t) × exp(β'X)"
+            },
+            {
+                "name": "Meta-Analysis",
+                "full_name": "Meta-Analysis (Fixed/Random Effect)",
+                "description": "Meta分析 - 合并多个研究的效应量",
+                "formula": "θ̂ = Σ(w_i × y_i) / Σ(w_i)"
+            },
+            {
+                "name": "Heterogeneity",
+                "full_name": "Heterogeneity Test (I², Q)",
+                "description": "异质性检验 - 评估研究间变异程度",
+                "formula": "I² = max(0, (Q-df)/Q × 100%)"
+            },
+            {
+                "name": "Sensitivity Analysis",
+                "full_name": "Leave-One-Out Sensitivity Analysis",
+                "description": "敏感性分析 - 逐一剔除法评估单个研究的影响",
+                "formula": "依次剔除每个研究重新计算合并效应"
             }
         ]
     }
+
+
+# ========== 生存分析 API ==========
+
+@app.post("/api/analysis/kaplan-meier")
+async def analyze_kaplan_meier(request: KaplanMeierRequest):
+    """Kaplan-Meier 生存分析"""
+    try:
+        result = statistical_engine.kaplan_meier_estimate(
+            times=request.times,
+            events=request.events,
+            confidence_level=request.confidence_level
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/analysis/kaplan-meier/plot")
+async def plot_kaplan_meier(request: SurvivalCurveRequest):
+    """生成 Kaplan-Meier 生存曲线图"""
+    try:
+        if request.groups and len(request.groups) > 0:
+            # 多组比较
+            groups_data = []
+            for group in request.groups:
+                km_result = statistical_engine.kaplan_meier_estimate(
+                    times=group["times"],
+                    events=group["events"],
+                    confidence_level=request.confidence_level
+                )
+                groups_data.append({
+                    "name": group["name"],
+                    "km_data": km_result
+                })
+
+            # 用第一组数据作为主数据
+            chart_path = visualization_generator.create_survival_curve(
+                km_data=groups_data[0]["km_data"],
+                title=request.title,
+                groups=groups_data,
+                filename=f"survival_curve_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+            )
+        else:
+            km_result = statistical_engine.kaplan_meier_estimate(
+                times=request.times,
+                events=request.events,
+                confidence_level=request.confidence_level
+            )
+            chart_path = visualization_generator.create_survival_curve(
+                km_data=km_result,
+                title=request.title,
+                filename=f"survival_curve_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+            )
+
+        return {
+            "chart_path": chart_path,
+            "message": "生存曲线图生成成功"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/analysis/cox-regression")
+async def analyze_cox_regression(request: CoxRegressionRequest):
+    """Cox 比例风险回归分析"""
+    try:
+        result = statistical_engine.cox_regression(
+            times=request.times,
+            events=request.events,
+            covariates=request.covariates,
+            confidence_level=request.confidence_level
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+# ========== Meta 分析 API ==========
+
+@app.post("/api/analysis/meta-analysis")
+async def analyze_meta_analysis(request: MetaAnalysisRequest):
+    """Meta 分析 (固定效应/随机效应)"""
+    try:
+        result = statistical_engine.meta_analysis(
+            effects=request.effects,
+            variances=request.variances,
+            study_names=request.study_names,
+            method=request.method,
+            confidence_level=request.confidence_level
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/analysis/heterogeneity")
+async def analyze_heterogeneity(request: MetaAnalysisRequest):
+    """异质性检验 (I², Q 检验)"""
+    try:
+        result = statistical_engine.heterogeneity_test(
+            effects=request.effects,
+            variances=request.variances
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/analysis/sensitivity")
+async def analyze_sensitivity(request: SensitivityAnalysisRequest):
+    """敏感性分析 (逐一剔除法)"""
+    try:
+        result = statistical_engine.sensitivity_analysis_leave_one_out(
+            effects=request.effects,
+            variances=request.variances,
+            study_names=request.study_names,
+            model=request.model,
+            confidence_level=request.confidence_level
+        )
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+# ========== 可视化新端点 API ==========
+
+@app.post("/api/visualize/forest-plot")
+async def create_forest_plot_endpoint(request: ForestPlotRequest):
+    """生成森林图 (Forest Plot)"""
+    try:
+        chart_path = visualization_generator.create_forest_plot(
+            studies=request.studies,
+            pooled_effect=request.pooled_effect,
+            pooled_ci_lower=request.pooled_ci_lower,
+            pooled_ci_upper=request.pooled_ci_upper,
+            title=request.title,
+            xlabel=request.xlabel,
+            xlog=request.xlog,
+            filename=f"forest_plot_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        )
+        return {
+            "chart_path": chart_path,
+            "message": "森林图生成成功"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/visualize/funnel-plot")
+async def create_funnel_plot_endpoint(request: FunnelPlotRequest):
+    """生成漏斗图 (Funnel Plot)"""
+    try:
+        chart_path = visualization_generator.create_funnel_plot(
+            effects=request.effects,
+            variances=request.variances,
+            study_names=request.study_names,
+            pooled_effect=request.pooled_effect,
+            title=request.title,
+            filename=f"funnel_plot_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        )
+        return {
+            "chart_path": chart_path,
+            "message": "漏斗图生成成功"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/visualize/heatmap")
+async def create_heatmap_endpoint(request: HeatmapRequest):
+    """生成热力图 (Heatmap)"""
+    try:
+        data = np.array(request.data)
+        if data.shape != (len(request.row_labels), len(request.col_labels)):
+            raise ValueError(
+                f"数据维度 {data.shape} 与标签数量 "
+                f"({len(request.row_labels)}行, {len(request.col_labels)}列) 不匹配"
+            )
+
+        chart_path = visualization_generator.create_heatmap_numpy(
+            data=data,
+            row_labels=request.row_labels,
+            col_labels=request.col_labels,
+            title=request.title,
+            cmap=request.cmap,
+            filename=f"heatmap_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
+        )
+        return {
+            "chart_path": chart_path,
+            "message": "热力图生成成功"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+# ========== 完整 Meta 分析 + 可视化 API ==========
+
+@app.post("/api/analysis/meta-analysis/full")
+async def run_full_meta_analysis(request: MetaAnalysisRequest):
+    """
+    运行完整的 Meta 分析流程：
+    1. 异质性检验
+    2. 固定效应 / 随机效应分析
+    3. 敏感性分析
+    4. 生成森林图和漏斗图
+    """
+    try:
+        # 1. Meta 分析
+        meta_result = statistical_engine.meta_analysis(
+            effects=request.effects,
+            variances=request.variances,
+            study_names=request.study_names,
+            method=request.method,
+            confidence_level=request.confidence_level
+        )
+
+        # 2. 敏感性分析
+        sensitivity_result = statistical_engine.sensitivity_analysis_leave_one_out(
+            effects=request.effects,
+            variances=request.variances,
+            study_names=request.study_names,
+            model="random" if meta_result.get("recommended_model") == "random_effect" else "fixed"
+        )
+
+        # 3. 生成森林图
+        recommended = meta_result.get("recommended_model", "fixed_effect")
+        if recommended == "random_effect" and "random_effect" in meta_result:
+            pooled = meta_result["random_effect"]
+        elif "fixed_effect" in meta_result:
+            pooled = meta_result["fixed_effect"]
+        else:
+            pooled = meta_result.get("random_effect", meta_result.get("fixed_effect", {}))
+
+        forest_studies = pooled.get("studies", [])
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+
+        forest_path = visualization_generator.create_forest_plot(
+            studies=forest_studies,
+            pooled_effect=pooled.get("pooled_effect"),
+            pooled_ci_lower=pooled.get("ci_lower"),
+            pooled_ci_upper=pooled.get("ci_upper"),
+            title="Forest Plot - Meta-Analysis",
+            filename=f"forest_plot_{timestamp}.png"
+        )
+
+        # 4. 生成漏斗图
+        funnel_path = visualization_generator.create_funnel_plot(
+            effects=request.effects,
+            variances=request.variances,
+            study_names=request.study_names,
+            pooled_effect=pooled.get("pooled_effect"),
+            title="Funnel Plot - Publication Bias",
+            filename=f"funnel_plot_{timestamp}.png"
+        )
+
+        return {
+            "meta_analysis": meta_result,
+            "sensitivity_analysis": sensitivity_result,
+            "charts": {
+                "forest_plot": forest_path,
+                "funnel_plot": funnel_path
+            },
+            "message": "完整 Meta 分析流程完成"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @app.get("/api/databases")
