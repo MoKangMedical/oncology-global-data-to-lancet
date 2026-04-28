@@ -2,7 +2,7 @@
 肿瘤学全球数据到柳叶刀 - FastAPI 主应用
 """
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Depends, Request, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 from datetime import datetime
 import base64
+import time
 
 # 导入自定义模块
 from app.core.statistics import statistical_engine
@@ -28,6 +29,15 @@ from app.data.hcc_sample import (
     get_sample_project_config
 )
 from app.core.export_service import export_service
+
+# 导入认证模块
+from app.core.auth import (
+    create_user, authenticate_user, get_user_by_id, get_user_by_token,
+    generate_api_key, revoke_api_key, revoke_api_key_by_id, validate_api_key,
+    list_user_api_keys, record_usage, check_quota, get_usage_today,
+    get_usage_history, get_user_stats, upgrade_user_plan,
+    create_jwt_token, decode_jwt_token, FREE_DAILY_QUOTA, PAID_DAILY_QUOTA
+)
 
 # 创建 FastAPI 应用
 app = FastAPI(
@@ -158,6 +168,86 @@ class HeatmapRequest(BaseModel):
     cmap: str = "YlOrRd"
 
 
+# ========== 认证相关数据模型 ==========
+
+class UserRegisterRequest(BaseModel):
+    username: str
+    email: str
+    password: str
+    plan: str = "free"
+
+
+class UserLoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class APIKeyCreateRequest(BaseModel):
+    key_name: str = "default"
+
+
+class APIKeyRevokeRequest(BaseModel):
+    key_id: str
+
+
+class PlanUpgradeRequest(BaseModel):
+    plan: str  # "free" or "paid"
+
+
+# ========== 认证依赖函数 ==========
+
+async def get_current_user_optional(
+    request: Request,
+    authorization: Optional[str] = Header(None),
+    x_api_key: Optional[str] = Header(None, alias="X-API-Key")
+) -> Optional[Dict[str, Any]]:
+    """获取当前用户（可选，不强制认证）"""
+    # 优先检查 Authorization header (Bearer token)
+    if authorization and authorization.startswith("Bearer "):
+        token = authorization[7:]
+        user = get_user_by_token(token)
+        if user:
+            return user
+
+    # 其次检查 API Key
+    if x_api_key:
+        user = validate_api_key(x_api_key)
+        if user:
+            return user
+
+    return None
+
+
+async def get_current_user(
+    request: Request,
+    authorization: Optional[str] = Header(None),
+    x_api_key: Optional[str] = Header(None, alias="X-API-Key")
+) -> Dict[str, Any]:
+    """获取当前用户（强制认证）"""
+    user = await get_current_user_optional(request, authorization, x_api_key)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="未认证。请提供有效的 JWT token 或 API 密钥。",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    return user
+
+
+async def check_user_quota(
+    request: Request,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+) -> Dict[str, Any]:
+    """检查用户配额"""
+    quota = check_quota(current_user["user_id"])
+    if not quota["allowed"]:
+        raise HTTPException(
+            status_code=429,
+            detail=quota["reason"]
+        )
+    return current_user
+
+
 # ========== API 路由 ==========
 
 @app.get("/", response_class=HTMLResponse)
@@ -182,6 +272,220 @@ async def api_root():
 async def health_check():
     """健康检查"""
     return {"status": "healthy", "service": "oncology-to-lancet"}
+
+
+# ========== 使用量追踪中间件 ==========
+
+@app.middleware("http")
+async def usage_tracking_middleware(request: Request, call_next):
+    """追踪所有 API 调用"""
+    start_time = time.time()
+
+    # 处理请求
+    response = await call_next(request)
+
+    # 只追踪 /api/ 路径的请求
+    if request.url.path.startswith("/api/") and not request.url.path.startswith("/api/auth/"):
+        elapsed_ms = (time.time() - start_time) * 1000
+
+        # 尝试获取用户
+        user = None
+        auth_header = request.headers.get("authorization", "")
+        api_key = request.headers.get("x-api-key", "")
+
+        if auth_header.startswith("Bearer "):
+            user = get_user_by_token(auth_header[7:])
+        elif api_key:
+            user = validate_api_key(api_key)
+
+        if user:
+            record_usage(
+                user_id=user["user_id"],
+                endpoint=request.url.path,
+                method=request.method,
+                status_code=response.status_code,
+                response_time_ms=elapsed_ms
+            )
+
+    return response
+
+
+# ========== 用户认证 API ==========
+
+@app.post("/api/auth/register")
+async def register_user(request: UserRegisterRequest):
+    """用户注册"""
+    try:
+        if len(request.password) < 6:
+            raise HTTPException(status_code=400, detail="密码长度至少6个字符")
+        if request.plan not in ("free", "paid"):
+            raise HTTPException(status_code=400, detail="无效的计划类型，可选: free, paid")
+
+        user = create_user(
+            username=request.username,
+            email=request.email,
+            password=request.password,
+            plan=request.plan
+        )
+
+        # 自动生成 JWT token
+        token = create_jwt_token({"sub": user["user_id"], "username": user["username"]})
+
+        # 自动生成默认 API 密钥
+        api_key_info = generate_api_key(user["user_id"], "default")
+
+        return {
+            "message": "注册成功",
+            "user": user,
+            "token": token,
+            "api_key": api_key_info["api_key"],
+            "expires_in_hours": 24
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/api/auth/login")
+async def login_user(request: UserLoginRequest):
+    """用户登录"""
+    user = authenticate_user(request.username, request.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="用户名或密码错误")
+
+    token = create_jwt_token({"sub": user["user_id"], "username": user["username"]})
+
+    # 获取用户的 API 密钥
+    api_keys = list_user_api_keys(user["user_id"])
+
+    return {
+        "message": "登录成功",
+        "user": user,
+        "token": token,
+        "api_keys": api_keys,
+        "expires_in_hours": 24
+    }
+
+
+# ========== 用户信息 API ==========
+
+@app.get("/api/auth/me")
+async def get_my_info(current_user: Dict[str, Any] = Depends(get_current_user)):
+    """获取当前用户信息"""
+    stats = get_user_stats(current_user["user_id"])
+    return stats
+
+
+@app.get("/api/auth/me/usage")
+async def get_my_usage(
+    days: int = 7,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """获取当前用户使用量统计"""
+    usage = get_usage_history(current_user["user_id"], days=days)
+    quota = check_quota(current_user["user_id"])
+    return {
+        "user_id": current_user["user_id"],
+        "quota": quota,
+        "usage": usage
+    }
+
+
+@app.get("/api/auth/me/quota")
+async def get_my_quota(current_user: Dict[str, Any] = Depends(get_current_user)):
+    """获取当前用户配额信息"""
+    return check_quota(current_user["user_id"])
+
+
+# ========== API 密钥管理 ==========
+
+@app.post("/api/auth/api-keys")
+async def create_api_key_endpoint(
+    request: APIKeyCreateRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """生成新的 API 密钥"""
+    key_info = generate_api_key(current_user["user_id"], request.key_name)
+    return {
+        "message": "API 密钥生成成功",
+        "key_id": key_info["key_id"],
+        "api_key": key_info["api_key"],
+        "key_name": key_info["key_name"],
+        "warning": "请妥善保管此密钥，此密钥只会显示一次。"
+    }
+
+
+@app.get("/api/auth/api-keys")
+async def list_api_keys_endpoint(
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """列出当前用户的所有 API 密钥"""
+    keys = list_user_api_keys(current_user["user_id"])
+    return {
+        "user_id": current_user["user_id"],
+        "api_keys": keys,
+        "total": len(keys)
+    }
+
+
+@app.delete("/api/auth/api-keys/{key_id}")
+async def revoke_api_key_endpoint(
+    key_id: str,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """撤销 API 密钥"""
+    success = revoke_api_key_by_id(current_user["user_id"], key_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="API 密钥不存在或不属于当前用户")
+    return {"message": "API 密钥已撤销", "key_id": key_id}
+
+
+# ========== 计划升级 ==========
+
+@app.post("/api/auth/upgrade")
+async def upgrade_plan_endpoint(
+    request: PlanUpgradeRequest,
+    current_user: Dict[str, Any] = Depends(get_current_user)
+):
+    """升级/变更用户计划"""
+    try:
+        updated_user = upgrade_user_plan(current_user["user_id"], request.plan)
+        if not updated_user:
+            raise HTTPException(status_code=404, detail="用户不存在")
+        return {
+            "message": f"计划已变更为: {request.plan}",
+            "user": updated_user
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+# ========== 管理端点 ==========
+
+@app.get("/api/admin/users")
+async def admin_list_users():
+    """列出所有用户 (管理员端点 - 简化版)"""
+    from app.core.auth import users_store, _sanitize_user
+    return {
+        "users": [_sanitize_user(u) for u in users_store.values()],
+        "total": len(users_store)
+    }
+
+
+@app.get("/api/admin/stats")
+async def admin_stats():
+    """系统统计 (管理员端点)"""
+    from app.core.auth import users_store, api_keys_store, usage_store
+    total_users = len(users_store)
+    active_keys = sum(1 for k in api_keys_store.values() if k["is_active"])
+    total_calls = sum(len(records) for records in usage_store.values())
+    today_calls = sum(get_usage_today(uid) for uid in users_store)
+    return {
+        "total_users": total_users,
+        "active_api_keys": active_keys,
+        "total_api_calls": total_calls,
+        "today_api_calls": today_calls,
+        "free_daily_quota": FREE_DAILY_QUOTA
+    }
 
 
 # ========== 项目管理 ==========

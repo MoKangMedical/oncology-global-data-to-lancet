@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cancer Epidemiology Research To Lancet</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<style>
+:root{--primary:#A51C30;--primary-light:#D6604D;--secondary:#2166AC;--accent:#4393C3;--bg:#FEF7ED;--text:#333;--card-bg:#fff;--border:#e5e7eb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+a{color:var(--primary);text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* Navigation */
+nav{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.1);position:sticky;top:0;z-index:100}
+.nav-inner{max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;justify-content:space-between;align-items:center}
+.nav-brand{font-weight:700;color:var(--primary);font-size:18px;display:flex;align-items:center;gap:8px}
+.nav-links{display:flex;gap:24px}
+.nav-links a{color:#666;font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--primary);text-decoration:none}
+
+/* Hero */
+.hero{text-align:center;padding:80px 20px;background:linear-gradient(135deg,#fff 0%,#fef7ed 100%);border-bottom:1px solid var(--border)}
+.hero h1{font-size:48px;color:var(--primary);margin-bottom:16px;font-weight:800}
+.hero p{font-size:20px;color:#666;max-width:700px;margin:0 auto 32px}
+.hero-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{padding:12px 28px;border-radius:8px;font-weight:600;font-size:15px;transition:all .2s;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.15);text-decoration:none}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-secondary{background:var(--secondary);color:#fff}
+.btn-outline{background:transparent;border:2px solid var(--primary);color:var(--primary)}
+.btn-outline:hover{background:var(--primary);color:#fff}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:40px 0}
+.stat{text-align:center;padding:24px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.stat-num{font-size:36px;font-weight:800;color:var(--primary)}
+.stat-label{font-size:14px;color:#666;margin-top:4px}
+
+/* Section */
+.section{padding:60px 0}
+.section-title{text-align:center;margin-bottom:40px}
+.section-title h2{font-size:32px;color:var(--text);margin-bottom:8px}
+.section-title p{color:#666;font-size:16px}
+
+/* Features */
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feature{background:#fff;padding:32px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:transform .2s}
+.feature:hover{transform:translateY(-4px)}
+.feature-icon{font-size:40px;margin-bottom:16px}
+.feature h3{font-size:18px;margin-bottom:8px}
+.feature p{font-size:14px;color:#666}
+
+/* Workflow */
+.workflow{display:flex;gap:24px;align-items:center;justify-content:center;flex-wrap:wrap}
+.workflow-step{display:flex;align-items:center;gap:12px;background:#fff;padding:16px 24px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.workflow-step .num{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.workflow-arrow{font-size:24px;color:#ccc}
+
+/* Chart */
+.chart-container{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-top:40px}
+
+/* Databases */
+.db-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.db-card{background:#fff;padding:24px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-top:4px solid var(--primary)}
+.db-card:nth-child(2){border-top-color:var(--secondary)}
+.db-card:nth-child(3){border-top-color:var(--accent)}
+.db-card h3{font-size:18px;margin-bottom:8px}
+.db-card p{font-size:14px;color:#666;margin-bottom:12px}
+.db-card .meta{display:flex;gap:16px;font-size:12px;color:#999}
+
+/* API */
+.api-section{background:#1a1a2e;color:#fff;padding:60px 0}
+.api-section h2{color:#fff}
+.api-section p{color:#aaa}
+.api-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:40px}
+.api-card{background:#16213e;padding:24px;border-radius:12px;border:1px solid #0f3460}
+.api-card h3{color:#e94560;margin-bottom:12px}
+.api-endpoint{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #0f3460;font-size:14px}
+.api-method{padding:2px 8px;border-radius:4px;font-size:12px;font-weight:600}
+.api-method.get{background:#27ae60;color:#fff}
+.api-method.post{background:#3498db;color:#fff}
+
+/* CTA */
+.cta{text-align:center;padding:80px 20px;background:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 100%);color:#fff}
+.cta h2{color:#fff;font-size:32px;margin-bottom:16px}
+.cta p{color:rgba(255,255,255,.8);max-width:600px;margin:0 auto 32px}
+.cta .btn{background:#fff;color:var(--primary)}
+
+/* Footer */
+footer{background:#1a1a2e;color:#aaa;padding:40px 0;text-align:center;font-size:14px}
+footer a{color:#e94560}
+
+/* Responsive */
+@media(max-width:768px){
+  .hero h1{font-size:32px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .features,.db-grid{grid-template-columns:1fr}
+  .api-grid{grid-template-columns:1fr}
+  .workflow{flex-direction:column}
+  .workflow-arrow{transform:rotate(90deg)}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+<div class="nav-inner">
+  <div class="nav-brand">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--primary)"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    Cancer Research To Lancet
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#data">Data Sources</a>
+    <a href="#api">API</a>
+    <a href="https://github.com/MoKangMedical/oncology-global-data-to-lancet">GitHub</a>
+  </div>
+</div>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="container">
+    <h1>Cancer Epidemiology Research To Lancet</h1>
+    <p>AI-powered platform that transforms global cancer data into publication-ready research papers for The Lancet</p>
+    <div class="hero-buttons">
+      <a href="https://github.com/MoKangMedical/oncology-global-data-to-lancet" class="btn btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+        View on GitHub
+      </a>
+      <a href="#workflow" class="btn btn-outline">See How It Works</a>
+    </div>
+  </div>
+</header>
+
+<!-- Stats -->
+<section class="container">
+  <div class="stats">
+    <div class="stat"><div class="stat-num">10+</div><div class="stat-label">Statistical Methods</div></div>
+    <div class="stat"><div class="stat-num">3</div><div class="stat-label">Data Sources</div></div>
+    <div class="stat"><div class="stat-num">8</div><div class="stat-label">Chart Types</div></div>
+    <div class="stat"><div class="stat-num">15</div><div class="stat-label">Countries</div></div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features" class="section">
+<div class="container">
+  <div class="section-title">
+    <h2>Platform Capabilities</h2>
+    <p>Comprehensive tools for cancer epidemiology research</p>
+  </div>
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">📊</div>
+      <h3>Data Integration</h3>
+      <p>Seamlessly integrate data from GLOBOCAN, GBD, and CI5 databases with automatic standardization</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📈</div>
+      <h3>Statistical Analysis</h3>
+      <p>PAF, Meta-analysis, Survival Analysis, Joinpoint regression with confidence intervals</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📉</div>
+      <h3>Visualization</h3>
+      <p>Lancet-style charts, Forest plots, Funnel plots, Interactive Plotly charts</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📝</div>
+      <h3>Paper Generation</h3>
+      <p>Auto-generate Lancet-standard paper drafts with proper formatting and citations</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔬</div>
+      <h3>Meta-Analysis</h3>
+      <p>Fixed/random effects models, heterogeneity tests, sensitivity analysis</p>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📦</div>
+      <h3>Export & Download</h3>
+      <p>Export charts (PNG/SVG), papers (MD/HTML/Word), and ZIP packages</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- Workflow -->
+<section id="workflow" class="section" style="background:#f8f9fa">
+<div class="container">
+  <div class="section-title">
+    <h2>Research Workflow</h2>
+    <p>From raw data to publication in 5 steps</p>
+  </div>
+  <div class="workflow">
+    <div class="workflow-step"><div class="num">1</div><div><b>Create Project</b><br><small>Set parameters</small></div></div>
+    <div class="workflow-arrow">→</div>
+    <div class="workflow-step"><div class="num">2</div><div><b>Upload Data</b><br><small>CSV/Excel</small></div></div>
+    <div class="workflow-arrow">→</div>
+    <div class="workflow-step"><div class="num">3</div><div><b>Run Analysis</b><br><small>PAF/Meta/Trend</small></div></div>
+    <div class="workflow-arrow">→</div>
+    <div class="workflow-step"><div class="num">4</div><div><b>Generate Charts</b><br><small>Lancet style</small></div></div>
+    <div class="workflow-arrow">→</div>
+    <div class="workflow-step"><div class="num">5</div><div><b>Export Paper</b><br><small>MD/HTML/Word</small></div></div>
+  </div>
+</div>
+</section>
+
+<!-- Interactive Chart -->
+<section class="section">
+<div class="container">
+  <div class="section-title">
+    <h2>Global Cancer Burden</h2>
+    <p>Interactive visualization of worldwide cancer statistics</p>
+  </div>
+  <div class="chart-container">
+    <div id="cancerChart"></div>
+  </div>
+</div>
+</section>
+
+<!-- Data Sources -->
+<section id="data" class="section" style="background:#f8f9fa">
+<div class="container">
+  <div class="section-title">
+    <h2>Integrated Data Sources</h2>
+    <p>Three authoritative global cancer databases</p>
+  </div>
+  <div class="db-grid">
+    <div class="db-card">
+      <h3>🌍 GLOBOCAN</h3>
+      <p>Global cancer incidence and mortality estimates for 185 countries</p>
+      <div class="meta"><span>IARC/WHO</span><span>36 cancer types</span></div>
+    </div>
+    <div class="db-card">
+      <h3>📊 GBD</h3>
+      <p>Comprehensive burden of disease estimates across 204 countries</p>
+      <div class="meta"><span>IHME</span><span>369 diseases</span></div>
+    </div>
+    <div class="db-card">
+      <h3>🗺️ CI5</h3>
+      <p>Cancer incidence data from population-based registries worldwide</p>
+      <div class="meta"><span>IARC</span><span>50 registries</span></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- API -->
+<section id="api" class="api-section">
+<div class="container">
+  <div class="section-title">
+    <h2>RESTful API</h2>
+    <p>Programmatic access to all platform features</p>
+  </div>
+  <div class="api-grid">
+    <div class="api-card">
+      <h3>Statistical Analysis</h3>
+      <div class="api-endpoint"><span class="api-method post">POST</span>/api/analysis/paf</div>
+      <div class="api-endpoint"><span class="api-method post">POST</span>/api/analysis/meta-analysis</div>
+      <div class="api-endpoint"><span class="api-method post">POST</span>/api/analysis/kaplan-meier</div>
+      <div class="api-endpoint"><span class="api-method post">POST</span>/api/analysis/cox-regression</div>
+    </div>
+    <div class="api-card">
+      <h3>Project Management</h3>
+      <div class="api-endpoint"><span class="api-method get">GET</span>/api/projects</div>
+      <div class="api-endpoint"><span class="api-method post">POST</span>/api/projects</div>
+      <div class="api-endpoint"><span class="api-method post">POST</span>/api/projects/{id}/analysis</div>
+      <div class="api-endpoint"><span class="api-method post">POST</span>/api/projects/{id}/export/package</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+<div class="container">
+  <h2>Ready to Accelerate Your Research?</h2>
+  <p>Start transforming global cancer data into publication-ready papers today</p>
+  <a href="https://github.com/MoKangMedical/oncology-global-data-to-lancet" class="btn">
+    Get Started on GitHub
+  </a>
+</div>
+</section>
+
+<!-- Footer -->
+<footer>
+<div class="container">
+  <p>Cancer Epidemiology Research To Lancet &copy; 2026</p>
+  <p style="margin-top:8px">Built with FastAPI, Plotly.js, and ❤️ for cancer research</p>
+</div>
+</footer>
+
+<!-- Chart -->
+<script>
+const cancers = ['Lung','Breast','Colorectal','Prostate','Stomach','Liver','Thyroid','Bladder','Kidney','Oesophagus'];
+const incidence = [22.0,19.2,17.2,14.1,11.1,9.5,8.4,5.8,4.8,4.5];
+const mortality = [18.0,6.9,8.6,4.8,8.2,8.4,1.0,2.4,2.1,3.9];
+
+Plotly.newPlot('cancerChart', [
+  {x:cancers, y:incidence, name:'Incidence ASR', type:'bar', marker:{color:'#A51C30'}},
+  {x:cancers, y:mortality, name:'Mortality ASR', type:'bar', marker:{color:'#2166AC'}}
+], {
+  title:{text:'Top 10 Cancers by Age-Standardized Rate (World)',font:{size:16}},
+  barmode:'group',
+  yaxis:{title:'ASR (per 100,000)'},
+  plot_bgcolor:'#fff',
+  paper_bgcolor:'#fff',
+  font:{family:'-apple-system,sans-serif'}
+},{responsive:true});
+</script>
+</body>
+</html>

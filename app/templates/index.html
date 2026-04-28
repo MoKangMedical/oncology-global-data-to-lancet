@@ -71,7 +71,53 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .dark-toggle:hover{border-color:var(--primary);transform:scale(1.1)}
 .dark .dark-toggle{border-color:var(--input-border);background:var(--surface)}
 .nav-mobile-toggle{display:none!important;width:36px;height:36px;border-radius:6px;border:1px solid var(--input-border);background:transparent;cursor:pointer;align-items:center;justify-content:center;font-size:20px;color:var(--text)}
-.page{display:none;max-width:1200px;margin:0 auto;padding:24px 20px}
+.nav-links a.nav-highlight{color:var(--secondary);font-weight:600}
+.dark .nav-links a.nav-highlight{color:var(--accent)}
+.dark .nav-links a.nav-highlight:hover{color:#6cb4ee}
+/* ========== Tutorials Page ========== */
+.tutorial-hero{text-align:center;padding:48px 20px 32px;background:linear-gradient(135deg,#fff 0%,var(--bg) 100%);border-bottom:3px solid var(--secondary)}
+.tutorial-hero h1{font-size:32px;color:var(--secondary);margin-bottom:8px}
+.tutorial-hero .subtitle{font-size:16px;color:#666;max-width:700px;margin:0 auto;line-height:1.7}
+.dark .tutorial-hero{border-bottom-color:var(--accent)}
+.accordion-item{background:var(--card-bg);border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:20px;overflow:hidden;border:1px solid var(--border);transition:box-shadow .2s}
+.accordion-item:hover{box-shadow:0 4px 20px rgba(0,0,0,.1)}
+.accordion-header{display:flex;align-items:center;gap:16px;padding:20px 28px;cursor:pointer;user-select:none;transition:background .2s}
+.accordion-header:hover{background:var(--surface)}
+.accordion-header .acc-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.acc-icon-paf{background:rgba(165,28,48,.1);color:var(--primary)}
+.acc-icon-meta{background:rgba(33,102,172,.1);color:var(--secondary)}
+.acc-icon-surv{background:rgba(39,174,96,.1);color:var(--green)}
+.acc-icon-viz{background:rgba(230,126,34,.1);color:#e67e22}
+.accordion-header .acc-title{font-size:18px;font-weight:700;color:var(--text);flex:1}
+.accordion-header .acc-desc{font-size:13px;color:var(--muted);margin-top:2px}
+.accordion-header .acc-arrow{font-size:20px;color:var(--muted);transition:transform .3s;flex-shrink:0}
+.accordion-item.open .accordion-header .acc-arrow{transform:rotate(180deg)}
+.accordion-body{display:none;padding:0 28px 28px}
+.accordion-item.open .accordion-body{display:block;animation:accordionSlide .3s ease}
+@keyframes accordionSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.tut-section{margin-bottom:24px}
+.tut-section-title{font-size:15px;font-weight:700;color:var(--secondary);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.tut-section-title::before{content:'';width:4px;height:16px;background:var(--secondary);border-radius:2px;display:inline-block}
+.tut-formula{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px 24px;margin:12px 0;font-family:'Courier New',monospace;font-size:15px;text-align:center;line-height:2;color:var(--text)}
+.tut-note{background:rgba(33,102,172,.06);border-left:4px solid var(--secondary);padding:12px 16px;border-radius:0 6px 6px 0;margin:12px 0;font-size:13px;color:var(--text);line-height:1.7}
+.tut-example{background:var(--green-light);border-left:4px solid var(--green);padding:12px 16px;border-radius:0 6px 6px 0;margin:12px 0;font-size:13px;line-height:1.7}
+.tut-example strong{color:var(--green)}
+.tut-code{background:#1e1e2e;color:#cdd6f4;border-radius:8px;padding:16px 20px;margin:12px 0;font-family:'Courier New',monospace;font-size:13px;line-height:1.7;overflow-x:auto;white-space:pre;position:relative}
+.dark .tut-code{background:#0d0d1a;border:1px solid var(--border)}
+.tut-code-label{position:absolute;top:8px;right:12px;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px}
+.tut-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+.tut-table th{background:var(--surface);padding:10px 14px;text-align:left;font-weight:600;color:var(--muted);border-bottom:2px solid var(--border);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.tut-table td{padding:10px 14px;border-bottom:1px solid var(--border)}
+.tut-table tr:hover{background:var(--surface)}
+.tut-badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600;margin:2px 4px}
+.tut-badge-blue{background:rgba(33,102,172,.12);color:var(--secondary)}
+.tut-badge-green{background:rgba(39,174,96,.12);color:var(--green)}
+.tut-badge-red{background:rgba(198,40,40,.12);color:#c62828}
+.tut-badge-orange{background:rgba(230,126,34,.12);color:#e67e22}
+.tut-list{padding-left:20px;margin:8px 0}
+.tut-list li{margin:6px 0;font-size:13px;line-height:1.7;color:var(--text)}
+.tut-list li::marker{color:var(--secondary)}
+@media(max-width:768px){
 .page.active{display:block}
 .card{background:var(--card-bg);border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.08);padding:24px;margin-bottom:20px;transition:background .3s,box-shadow .3s}
 .btn{padding:10px 20px;border-radius:6px;border:none;cursor:pointer;font-weight:500;transition:all .2s;font-size:14px}
@@ -324,10 +370,12 @@ p{line-height:1.75}
   <button class="nav-mobile-toggle" onclick="toggleMobileMenu()" aria-label="菜单">☰</button>
   <div class="nav-links" id="navLinks">
     <a onclick="showPage('home')">首页</a>
+    <a onclick="showPage('dashboard')">📊 数据仪表板</a>
     <a onclick="showPage('databases')">数据库</a>
     <a onclick="showPage('wizard')">新建项目</a>
     <a onclick="showPage('projects')">我的项目</a>
     <a onclick="showPage('calculator')">PAF计算器</a>
+    <a onclick="showPage('tutorials')" class="nav-highlight">📚 方法教程</a>
     <a onclick="showPage('export')">导出中心</a>
     <a href="/api/docs" target="_blank">API</a>
     <a onclick="startTour()" style="color:var(--primary);cursor:pointer" title="使用指南">?</a>
@@ -685,6 +733,114 @@ p{line-height:1.75}
     <div id="demoSteps"></div>
     <div id="demoOutput"></div>
   </div>
+</div>
+</div>
+
+<!-- ========== DASHBOARD PAGE ========== -->
+<div id="page-dashboard" class="page">
+
+<!-- Dashboard Hero -->
+<div style="text-align:center;padding:32px 20px 24px;margin:-24px -20px 28px;background:linear-gradient(135deg,#A51C30 0%,#8B1525 100%);border-radius:0 0 12px 12px">
+  <h1 style="color:#fff;font-size:28px;margin-bottom:8px;font-family:'Palatino Linotype',Georgia,serif">📊 Global Cancer Burden Dashboard</h1>
+  <p style="color:rgba(255,255,255,0.85);font-size:15px;max-width:600px;margin:0 auto;line-height:1.6">交互式数据仪表板 — 全球癌症负担、发病率趋势与风险因素全景</p>
+</div>
+
+<!-- Dashboard Filter Bar -->
+<div style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;align-items:center;background:var(--card-bg);padding:16px 20px;border-radius:10px;border:1px solid var(--border)">
+  <label style="margin:0;font-size:13px;font-weight:600;color:var(--primary)">筛选条件：</label>
+  <select id="dash-region-filter" class="input" style="width:auto;min-width:160px" onchange="refreshDashboard()">
+    <option value="all">全球所有地区</option>
+    <option value="asia">亚洲 Asia</option>
+    <option value="europe">欧洲 Europe</option>
+    <option value="americas">美洲 Americas</option>
+    <option value="africa">非洲 Africa</option>
+    <option value="oceania">大洋洲 Oceania</option>
+  </select>
+  <select id="dash-year-filter" class="input" style="width:auto;min-width:120px" onchange="refreshDashboard()">
+    <option value="2022">2022</option>
+    <option value="2020">2020</option>
+    <option value="2018">2018</option>
+    <option value="2012">2012</option>
+  </select>
+  <button class="btn btn-primary btn-sm" onclick="refreshDashboard()">🔄 刷新</button>
+</div>
+
+<!-- KPI Summary Cards -->
+<div class="grid-4" style="margin-bottom:24px">
+  <div class="card" style="text-align:center;border-top:4px solid #A51C30;padding:20px">
+    <div style="font-size:14px;color:var(--muted);margin-bottom:4px">全球新发病例</div>
+    <div style="font-size:28px;font-weight:700;color:var(--primary)">20.0M</div>
+    <div style="font-size:11px;color:#999;margin-top:4px">GLOBOCAN 2022</div>
+  </div>
+  <div class="card" style="text-align:center;border-top:4px solid #2166AC;padding:20px">
+    <div style="font-size:14px;color:var(--muted);margin-bottom:4px">全球死亡病例</div>
+    <div style="font-size:28px;font-weight:700;color:var(--secondary)">9.7M</div>
+    <div style="font-size:11px;color:#999;margin-top:4px">GLOBOCAN 2022</div>
+  </div>
+  <div class="card" style="text-align:center;border-top:4px solid #e67e22;padding:20px">
+    <div style="font-size:14px;color:var(--muted);margin-bottom:4px">5年生存率 (全球)</div>
+    <div style="font-size:28px;font-weight:700;color:#e67e22">~55%</div>
+    <div style="font-size:11px;color:#999;margin-top:4px">综合估计</div>
+  </div>
+  <div class="card" style="text-align:center;border-top:4px solid #27ae60;padding:20px">
+    <div style="font-size:14px;color:var(--muted);margin-bottom:4px">可预防比例</div>
+    <div style="font-size:28px;font-weight:700;color:#27ae60">30-50%</div>
+    <div style="font-size:11px;color:#999;margin-top:4px">风险因素归因</div>
+  </div>
+</div>
+
+<!-- Chart 1: Global Choropleth Map -->
+<div class="card" style="padding:20px;margin-bottom:24px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div>
+      <h3 style="font-size:17px;color:var(--primary);margin-bottom:4px">🌍 全球癌症负担分布图</h3>
+      <p style="font-size:12px;color:var(--muted)">按国家/地区的年龄标准化发病率 (ASR) · 悬停查看详细数据 · 支持缩放</p>
+    </div>
+    <select id="dash-map-metric" class="input" style="width:auto;min-width:140px" onchange="renderDashboardMap()">
+      <option value="incidence">发病率 (ASR)</option>
+      <option value="mortality">死亡率 (ASR)</option>
+      <option value="ratio">死亡/发病比</option>
+    </select>
+  </div>
+  <div id="dash-map-chart" style="width:100%;min-height:460px"></div>
+</div>
+
+<!-- Chart 2 & 3: Pie Chart + Trend Line (side by side) -->
+<div class="grid-2" style="margin-bottom:24px">
+  <!-- Pie Chart -->
+  <div class="card" style="padding:20px">
+    <h3 style="font-size:17px;color:var(--primary);margin-bottom:4px">🎯 癌症类型分布</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:8px">全球前10大癌症的新发病例占比 · 点击可聚焦</p>
+    <div id="dash-pie-chart" style="width:100%;min-height:400px"></div>
+  </div>
+  <!-- Trend Line Chart -->
+  <div class="card" style="padding:20px">
+    <h3 style="font-size:17px;color:var(--secondary);margin-bottom:4px">📈 发病率趋势变化</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:8px">1990-2021年全球主要癌症ASR趋势 · 悬停查看年份</p>
+    <div id="dash-trend-chart" style="width:100%;min-height:400px"></div>
+  </div>
+</div>
+
+<!-- Chart 4 & 5: Bar Chart + Radar Chart (side by side) -->
+<div class="grid-2" style="margin-bottom:24px">
+  <!-- Risk Factors Bar Chart -->
+  <div class="card" style="padding:20px">
+    <h3 style="font-size:17px;color:#e67e22;margin-bottom:4px">⚠️ 风险因素排名</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:8px">癌症相关风险因素的PAF排名 · 悬停查看95%CI</p>
+    <div id="dash-risk-chart" style="width:100%;min-height:400px"></div>
+  </div>
+  <!-- Regional Radar Chart -->
+  <div class="card" style="padding:20px">
+    <h3 style="font-size:17px;color:#27ae60;margin-bottom:4px">🗺️ 地区对比雷达图</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:8px">六大地区在关键癌症指标上的多维度对比</p>
+    <div id="dash-radar-chart" style="width:100%;min-height:400px"></div>
+  </div>
+</div>
+
+<!-- Data Sources Footer -->
+<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;border-top:1px solid var(--border)">
+  <p>数据来源: GLOBOCAN 2022 (IARC/WHO) · GBD 2021 (IHME) · CI5 Vol.XII (IARC)</p>
+  <p>图表基于样本数据生成，仅供参考展示平台功能</p>
 </div>
 </div>
 
@@ -1957,6 +2113,10 @@ const _origToggle = toggleDarkMode;
 toggleDarkMode = function() {
   _origToggle();
   setTimeout(initHomePlotlyChart, 350);
+  // Also refresh dashboard charts if dashboard is visible
+  if (document.getElementById('page-dashboard').classList.contains('active')) {
+    setTimeout(initDashboard, 350);
+  }
 };
 
 // ========== Database Page Tab Navigation ==========
@@ -2128,6 +2288,336 @@ function createPlotlyTrendChart(containerId, years, values, ciLower, ciUpper, ti
 
   Plotly.newPlot(containerId, [ciTrace, mainTrace], layout, { responsive: true, displayModeBar: true, displaylogo: false });
 }
+
+// ========== Dashboard Page ==========
+function initDashboard() {
+  if (typeof Plotly === 'undefined') return;
+  renderDashboardMap();
+  renderDashboardPie();
+  renderDashboardTrend();
+  renderDashboardRiskFactors();
+  renderDashboardRadar();
+}
+
+function refreshDashboard() {
+  renderDashboardMap();
+  renderDashboardPie();
+  renderDashboardRiskFactors();
+}
+
+function getDashTheme() {
+  const isDark = document.body.classList.contains('dark');
+  return {
+    isDark,
+    textColor: isDark ? '#e0e0e0' : '#333',
+    gridColor: isDark ? '#2a2a4a' : '#f0ebe5',
+    bgColor: isDark ? '#16213e' : '#fefcf9',
+    paperBg: isDark ? '#16213e' : '#fff',
+    mutedColor: isDark ? '#aab' : '#666'
+  };
+}
+
+// ---- Chart 1: Global Choropleth Map ----
+function renderDashboardMap() {
+  const el = document.getElementById('dash-map-chart');
+  if (!el) return;
+  const t = getDashTheme();
+  const metric = document.getElementById('dash-map-metric')?.value || 'incidence';
+
+  // GLOBOCAN 2022 style country data (ISO-3 codes)
+  const countries = ['USA','CHN','IND','BRA','RUS','JPN','DEU','GBR','FRA','AUS','CAN','KOR','MEX','IDN','NGA','EGY','ZAF','TUR','ITA','ESP','THA','VNM','PAK','BGD','PHL','ETH','COD','TZA','KEN','COL','ARG','CHL','PER','VEN','SAU','IRN','IRQ','POL','UKR','ROU','NLD','BEL','SWE','NOR','DNK','FIN','CHE','AUT','PRT','GRC','CZE','HUN','ISR','SGP','MYS','NZL'];
+  const names = ['United States','China','India','Brazil','Russia','Japan','Germany','United Kingdom','France','Australia','Canada','South Korea','Mexico','Indonesia','Nigeria','Egypt','South Africa','Turkey','Italy','Spain','Thailand','Vietnam','Pakistan','Bangladesh','Philippines','Ethiopia','DR Congo','Tanzania','Kenya','Colombia','Argentina','Chile','Peru','Venezuela','Saudi Arabia','Iran','Iraq','Poland','Ukraine','Romania','Netherlands','Belgium','Sweden','Norway','Denmark','Finland','Switzerland','Austria','Portugal','Greece','Czech Republic','Hungary','Israel','Singapore','Malaysia','New Zealand'];
+
+  const incidenceData = [305,295,100,205,230,260,265,270,290,320,295,250,160,145,105,135,200,215,280,275,150,160,105,95,130,85,95,90,110,185,195,225,165,185,160,155,115,240,220,215,290,295,280,290,310,265,275,275,285,260,250,245,260,210,170,300];
+  const mortalityData = [95,140,65,95,130,90,100,105,100,85,90,80,75,95,75,90,105,100,85,85,80,95,65,60,70,65,70,65,75,85,85,100,75,80,60,70,55,100,115,105,90,95,85,85,90,80,80,90,100,95,100,90,75,60,65,80];
+
+  const ratioData = mortalityData.map((m, i) => m / incidenceData[i]);
+
+  let data, title, colorScale;
+  if (metric === 'incidence') {
+    data = incidenceData;
+    title = '全球癌症发病率 (ASR per 100,000) — GLOBOCAN 2022';
+    colorScale = [[0, '#fef0d9'], [0.25, '#fdcc8a'], [0.5, '#fc8d59'], [0.75, '#e34a33'], [1, '#b30000']];
+  } else if (metric === 'mortality') {
+    data = mortalityData;
+    title = '全球癌症死亡率 (ASR per 100,000) — GLOBOCAN 2022';
+    colorScale = [[0, '#eff3ff'], [0.25, '#bdd7e7'], [0.5, '#6baed6'], [0.75, '#3182bd'], [1, '#08519c']];
+  } else {
+    data = ratioData.map(v => Math.round(v * 100));
+    title = '全球癌症死亡/发病比 (%) — GLOBOCAN 2022';
+    colorScale = [[0, '#f7fcf5'], [0.25, '#c7e9c0'], [0.5, '#74c476'], [0.75, '#238b45'], [1, '#00441b']];
+  }
+
+  const trace = {
+    type: 'choropleth',
+    locations: countries,
+    z: data,
+    text: names.map((n, i) => `${n}<br>Incid: ${incidenceData[i]}<br>Mort: ${mortalityData[i]}<br>M/I: ${(ratioData[i]*100).toFixed(0)}%`),
+    hovertemplate: '%{text}<extra></extra>',
+    colorscale: colorScale,
+    colorbar: {
+      title: { text: metric === 'ratio' ? '%(M/I)' : 'ASR\n(per 100K)', font: { size: 12, color: t.textColor } },
+      tickfont: { color: t.mutedColor, size: 11 },
+      thickness: 15, len: 0.7
+    },
+    marker: { line: { color: t.isDark ? '#2a2a4a' : '#ddd', width: 0.5 } }
+  };
+
+  const layout = {
+    geo: {
+      showframe: false, showcoastlines: true, coastlinecolor: t.isDark ? '#3a3a5a' : '#ccc',
+      projection: { type: 'natural earth' },
+      landcolor: t.isDark ? '#1e2a4a' : '#f5f5f0',
+      oceancolor: t.isDark ? '#0f1a30' : '#e8f0fe',
+      showocean: true, showlakes: true, lakecolor: t.isDark ? '#0f1a30' : '#e8f0fe',
+      showcountries: true, countrycolor: t.isDark ? '#2a2a4a' : '#ddd',
+      bgcolor: 'transparent'
+    },
+    title: { text: title, font: { size: 15, color: t.textColor, family: 'Helvetica Neue, Arial' }, x: 0.5 },
+    paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+    margin: { t: 50, b: 20, l: 10, r: 10 },
+    height: 440,
+    font: { family: 'Helvetica Neue, Arial, sans-serif', color: t.textColor }
+  };
+
+  Plotly.newPlot(el, [trace], layout, {
+    responsive: true, displayModeBar: true,
+    modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+    displaylogo: false,
+    toImageButtonOptions: { format: 'png', filename: 'cancer_world_map', width: 1400, height: 700, scale: 2 }
+  });
+}
+
+// ---- Chart 2: Cancer Type Distribution Pie ----
+function renderDashboardPie() {
+  const el = document.getElementById('dash-pie-chart');
+  if (!el) return;
+  const t = getDashTheme();
+
+  const cancers = ['肺癌\nLung', '乳腺癌\nBreast', '结直肠癌\nColorectal', '前列腺癌\nProstate', '胃癌\nStomach', '肝癌\nLiver', '甲状腺癌\nThyroid', '膀胱癌\nBladder', '宫颈癌\nCervix', '其他\nOthers'];
+  const values = [2445, 2312, 1931, 1414, 971, 870, 825, 615, 604, 6213];
+  const colors = ['#A51C30', '#D6604D', '#2166AC', '#4393C3', '#e67e22', '#f39c12', '#27ae60', '#8e44ad', '#e91e63', '#999'];
+
+  const trace = {
+    type: 'pie',
+    labels: cancers,
+    values: values,
+    textinfo: 'label+percent',
+    textposition: 'auto',
+    textfont: { size: 11, color: '#fff' },
+    hole: 0.4,
+    marker: { colors: colors, line: { color: t.paperBg, width: 2 } },
+    hovertemplate: '<b>%{label}</b><br>新发病例: %{value:,}千<br>占比: %{percent}<extra></extra>',
+    pull: [0.05, 0.02, 0, 0, 0, 0, 0, 0, 0, 0]
+  };
+
+  const layout = {
+    showlegend: true,
+    legend: { orientation: 'v', x: 1, y: 0.5, font: { size: 10, color: t.textColor } },
+    paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+    margin: { t: 20, b: 20, l: 20, r: 120 },
+    height: 380,
+    font: { family: 'Helvetica Neue, Arial, sans-serif', color: t.textColor },
+    annotations: [{
+      text: '<b>20M</b><br>Total',
+      showarrow: false, font: { size: 16, color: t.textColor },
+      x: 0.42, y: 0.5
+    }]
+  };
+
+  Plotly.newPlot(el, [trace], layout, {
+    responsive: true, displayModeBar: true,
+    modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+    displaylogo: false
+  });
+}
+
+// ---- Chart 3: Incidence Trend Line Chart ----
+function renderDashboardTrend() {
+  const el = document.getElementById('dash-trend-chart');
+  if (!el) return;
+  const t = getDashTheme();
+
+  const years = [1990, 1995, 2000, 2005, 2010, 2015, 2018, 2020, 2021];
+  const trends = {
+    '肺癌 Lung': { v: [20.5, 21.2, 22.0, 22.8, 23.5, 24.0, 24.2, 24.5, 24.7], color: '#A51C30' },
+    '乳腺癌 Breast': { v: [18.2, 19.5, 20.8, 21.5, 22.3, 22.8, 23.0, 23.2, 23.4], color: '#D6604D' },
+    '结直肠癌 Colorectal': { v: [16.0, 16.8, 17.5, 18.0, 18.5, 19.0, 19.2, 19.3, 19.5], color: '#2166AC' },
+    '甲状腺癌 Thyroid': { v: [3.5, 4.2, 5.1, 6.0, 7.2, 8.0, 8.5, 8.9, 9.2], color: '#27ae60' },
+    '肝癌 Liver': { v: [10.5, 10.8, 10.5, 10.2, 9.8, 9.5, 9.4, 9.5, 9.6], color: '#e67e22' }
+  };
+
+  const traces = Object.entries(trends).map(([name, d]) => ({
+    x: years, y: d.v, name: name,
+    type: 'scatter', mode: 'lines+markers',
+    line: { color: d.color, width: 2.5, shape: 'spline' },
+    marker: { size: 5, color: d.color },
+    hovertemplate: `<b>${name}</b><br>Year: %{x}<br>ASR: %{y:.1f}<extra></extra>`
+  }));
+
+  const layout = {
+    xaxis: {
+      title: { text: 'Year', font: { size: 12, color: t.mutedColor } },
+      gridcolor: t.gridColor, tickfont: { color: t.mutedColor, size: 11 },
+      dtick: 5
+    },
+    yaxis: {
+      title: { text: 'ASR (per 100,000)', font: { size: 12, color: t.mutedColor } },
+      gridcolor: t.gridColor, zeroline: false, tickfont: { color: t.mutedColor, size: 11 }
+    },
+    legend: { orientation: 'h', y: -0.2, x: 0.5, xanchor: 'center', font: { size: 10, color: t.textColor } },
+    plot_bgcolor: t.bgColor, paper_bgcolor: 'transparent',
+    margin: { t: 20, b: 80, l: 50, r: 20 },
+    height: 380,
+    font: { family: 'Helvetica Neue, Arial, sans-serif', color: t.textColor },
+    hoverlabel: { bgcolor: t.isDark ? '#1e2a4a' : '#fff', bordercolor: '#A51C30', font: { size: 12 } }
+  };
+
+  Plotly.newPlot(el, traces, layout, {
+    responsive: true, displayModeBar: true,
+    modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+    displaylogo: false
+  });
+}
+
+// ---- Chart 4: Risk Factors Bar Chart ----
+function renderDashboardRiskFactors() {
+  const el = document.getElementById('dash-risk-chart');
+  if (!el) return;
+  const t = getDashTheme();
+
+  const risks = [
+    { name: '吸烟 Smoking', paf: 33.9, ci_low: 30.2, ci_high: 37.4 },
+    { name: '饮酒 Alcohol', paf: 7.4, ci_low: 5.9, ci_high: 9.0 },
+    { name: '高BMI High BMI', paf: 5.7, ci_low: 3.8, ci_high: 7.8 },
+    { name: '空气污染 Air Pollution', paf: 5.2, ci_low: 3.5, ci_high: 7.0 },
+    { name: '缺乏运动 Inactivity', paf: 4.8, ci_low: 2.6, ci_high: 7.2 },
+    { name: '乙肝 HBV', paf: 4.5, ci_low: 3.1, ci_high: 6.0 },
+    { name: '丙肝 HCV', paf: 2.5, ci_low: 1.4, ci_high: 3.8 },
+    { name: 'HPV', paf: 2.2, ci_low: 1.5, ci_high: 3.1 },
+    { name: '幽门螺杆菌 H.pylori', paf: 2.0, ci_low: 1.2, ci_high: 3.0 },
+    { name: '职业暴露 Occupational', paf: 1.8, ci_low: 0.9, ci_high: 2.9 },
+    { name: '辐射 Radiation', paf: 1.2, ci_low: 0.6, ci_high: 2.0 },
+    { name: '糖尿病 Diabetes', paf: 1.0, ci_low: 0.5, ci_high: 1.6 }
+  ].sort((a, b) => b.paf - a.paf);
+
+  const colors = risks.map((_, i) => {
+    const opacity = 1 - i * 0.06;
+    return `rgba(165, 28, 48, ${opacity})`;
+  });
+
+  const trace = {
+    y: risks.map(r => r.name),
+    x: risks.map(r => r.paf),
+    type: 'bar', orientation: 'h',
+    marker: { color: colors, line: { color: '#8B1525', width: 0.5 } },
+    text: risks.map(r => r.paf.toFixed(1) + '%'),
+    textposition: 'outside',
+    textfont: { size: 11, color: t.textColor },
+    hovertemplate: risks.map(r =>
+      `<b>${r.name}</b><br>PAF: ${r.paf}%<br>95% CI: ${r.ci_low}% - ${r.ci_high}%<extra></extra>`
+    ),
+    error_x: {
+      type: 'data',
+      array: risks.map(r => r.ci_high - r.paf),
+      arrayminus: risks.map(r => r.paf - r.ci_low),
+      visible: true,
+      color: 'rgba(100,100,100,0.5)',
+      thickness: 1.5, width: 4
+    }
+  };
+
+  const layout = {
+    xaxis: {
+      title: { text: 'PAF (%)', font: { size: 12, color: t.mutedColor } },
+      gridcolor: t.gridColor, zeroline: false, tickfont: { color: t.mutedColor }
+    },
+    yaxis: { automargin: true, tickfont: { size: 11, color: t.textColor } },
+    plot_bgcolor: t.bgColor, paper_bgcolor: 'transparent',
+    margin: { t: 10, b: 50, l: 160, r: 60 },
+    height: 380,
+    font: { family: 'Helvetica Neue, Arial, sans-serif', color: t.textColor },
+    hoverlabel: { bgcolor: t.isDark ? '#1e2a4a' : '#fff', bordercolor: '#A51C30', font: { size: 12 } }
+  };
+
+  Plotly.newPlot(el, [trace], layout, {
+    responsive: true, displayModeBar: true,
+    modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+    displaylogo: false
+  });
+}
+
+// ---- Chart 5: Regional Radar Chart ----
+function renderDashboardRadar() {
+  const el = document.getElementById('dash-radar-chart');
+  if (!el) return;
+  const t = getDashTheme();
+
+  const categories = ['发病率\nIncidence', '死亡率\nMortality', '5年生存率\nSurvival', '风险暴露\nRisk Exposure', '医疗资源\nHealthcare', '数据质量\nData Quality'];
+  const regions = {
+    '东亚 E.Asia': { v: [230, 110, 58, 45, 70, 75], color: '#A51C30' },
+    '欧洲 Europe': { v: [270, 100, 60, 50, 85, 90], color: '#2166AC' },
+    '北美 N.America': { v: [300, 90, 68, 48, 90, 95], color: '#27ae60' },
+    '南亚 S.Asia': { v: [110, 70, 35, 55, 30, 40], color: '#e67e22' },
+    '非洲 Africa': { v: [100, 75, 25, 60, 15, 25], color: '#8e44ad' },
+    '拉丁美洲 LatAm': { v: [190, 85, 50, 52, 55, 55], color: '#17a2b8' }
+  };
+
+  const traces = Object.entries(regions).map(([name, d]) => ({
+    type: 'scatterpolar',
+    r: [...d.v, d.v[0]], // close the polygon
+    theta: [...categories, categories[0]],
+    fill: 'toself',
+    fillcolor: d.color.replace(')', ', 0.08)').replace('rgb', 'rgba').replace('#', ''),
+    name: name,
+    line: { color: d.color, width: 2 },
+    marker: { size: 4, color: d.color },
+    hovertemplate: `<b>${name}</b><br>%{theta}: %{r}<extra></extra>`
+  }));
+
+  // Fix fillcolor with proper rgba
+  traces.forEach(tr => {
+    const hex = tr.line.color;
+    const r = parseInt(hex.slice(1,3), 16), g = parseInt(hex.slice(3,5), 16), b = parseInt(hex.slice(5,7), 16);
+    tr.fillcolor = `rgba(${r},${g},${b},0.08)`;
+  });
+
+  const layout = {
+    polar: {
+      radialaxis: {
+        visible: true, range: [0, 100],
+        gridcolor: t.gridColor, tickfont: { size: 10, color: t.mutedColor },
+        linecolor: t.gridColor
+      },
+      angularaxis: {
+        gridcolor: t.gridColor, tickfont: { size: 10, color: t.textColor },
+        linecolor: t.gridColor
+      },
+      bgcolor: 'transparent'
+    },
+    showlegend: true,
+    legend: { orientation: 'h', y: -0.15, x: 0.5, xanchor: 'center', font: { size: 10, color: t.textColor } },
+    paper_bgcolor: 'transparent', plot_bgcolor: 'transparent',
+    margin: { t: 20, b: 60, l: 60, r: 60 },
+    height: 380,
+    font: { family: 'Helvetica Neue, Arial, sans-serif', color: t.textColor }
+  };
+
+  Plotly.newPlot(el, traces, layout, {
+    responsive: true, displayModeBar: true,
+    modeBarButtonsToRemove: ['lasso2d', 'select2d'],
+    displaylogo: false
+  });
+}
+
+// Update showPage to trigger dashboard init
+const _origShowPage = showPage;
+showPage = function(name) {
+  _origShowPage(name);
+  if (name === 'dashboard') {
+    setTimeout(initDashboard, 100);
+  }
+};
 
 // Init
 initDarkMode();
