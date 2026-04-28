@@ -2,7 +2,7 @@
 # 肿瘤学全球数据到柳叶刀 - 依赖列表
 
 # Web Framework
-fastapi>=0.104.0
+fastapi>=0.136.1
 uvicorn[standard]>=0.24.0
 python-multipart>=0.0.6
 
